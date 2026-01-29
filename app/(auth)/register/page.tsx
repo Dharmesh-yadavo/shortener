@@ -4,37 +4,49 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { GoogleIcon } from "@/components/common/GoogleIcon";
-import { ChangeEvent, FormEvent, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { GlassBackground } from "@/components/common/GlassBackground";
-
-interface RegisterationFormData {
-  name: string;
-  email: string;
-  password: string;
-}
+import { toast } from "sonner";
+import { registrationAction } from "@/features/auth/server/auth.action";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  RegisterUserData,
+  registerUserSchema,
+} from "@/features/auth/auth.schema";
+import { useState } from "react";
+import { redirect } from "next/navigation";
 
 const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState<RegisterationFormData>({
-    name: "",
-    email: "",
-    password: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(registerUserSchema),
   });
 
-  const handleInputChange = (name: string, value: string) => {
-    setFormData((prev) => {
-      return { ...prev, [name]: value };
-    });
-  };
+  const onSubmit = async (data: RegisterUserData) => {
+    const result = await registrationAction(data);
 
-  const handleFormSubmit = (e: FormEvent) => {
-    try {
-      console.log(e);
-    } catch (error) {
-      console.log(error);
+    if (result.status === "success") {
+      toast.success(result.message);
+      redirect("/");
+    } else {
+      toast.error(result.message);
     }
   };
+
+  const inputStyles = (hasError: boolean) => `
+    h-11 px-4 bg-slate-50 border-slate-200 rounded-lg transition-all duration-200
+    focus-visible:ring-2 focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-offset-0
+    ${hasError ? "border-red-500 bg-red-50/50 focus-visible:ring-red-500/10 focus-visible:border-red-500" : ""}
+  `;
+
+  const labelStyles =
+    "text-[12px] font-semibold text-slate-600 uppercase tracking-tight";
+  const errorStyles = "text-[12px] font-medium text-red-500 mt-1";
 
   return (
     <main className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
@@ -51,67 +63,55 @@ const SignupPage: React.FC = () => {
           </p>
 
           <form
-            onSubmit={handleFormSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             className="mt-6 space-y-4 text-left"
           >
             <div className="space-y-1">
-              <Label
-                htmlFor="name"
-                className="text-slate-700 font-semibold ml-1 text-xs"
-              >
+              <Label htmlFor="name" className={labelStyles}>
                 Full Name
               </Label>
               <Input
                 type="text"
-                name="name"
-                value={formData.name}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleInputChange("name", e.target.value)
-                }
                 required
+                {...register("name")}
                 placeholder="Full Name"
-                className="h-10 bg-white/50 text-slate-500 placeholder-slate-200 border-slate-100 rounded-xl focus:ring-emerald-400 text-sm"
+                className={inputStyles(!!errors.name)}
               />
+              {errors.name && (
+                <p className={errorStyles}>{errors.name.message}</p>
+              )}
             </div>
 
             <div className="space-y-1">
-              <Label
-                htmlFor="email"
-                className="text-slate-700 font-semibold ml-1 text-xs"
-              >
+              <Label htmlFor="email" className={labelStyles}>
                 Email Address
               </Label>
               <Input
                 type="email"
-                name="email"
                 required
-                value={formData.email}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleInputChange("email", e.target.value)
-                }
+                {...register("email")}
                 placeholder="name@example.com"
-                className="h-10 bg-white/50 text-slate-500 placeholder-slate-200 border-slate-100 rounded-xl focus:ring-emerald-400 text-sm"
+                className={inputStyles(!!errors.email)}
               />
+              {errors.email && (
+                <p className={errorStyles}>{errors.email.message}</p>
+              )}
             </div>
 
             <div className="relative space-y-1">
-              <Label
-                htmlFor="password"
-                className="text-slate-700 font-semibold ml-1 text-xs"
-              >
+              <Label htmlFor="password" className={labelStyles}>
                 Password
               </Label>
               <Input
                 type={showPassword ? "text" : "password"}
-                name="password"
                 required
-                value={formData.password}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleInputChange("password", e.target.value)
-                }
+                {...register("password")}
                 placeholder="••••••••"
-                className="h-10 bg-white/50 text-slate-500 placeholder-slate-200 border-slate-100 rounded-xl focus:ring-emerald-400 text-sm"
+                className={inputStyles(!!errors.password)}
               />
+              {errors.password && (
+                <p className={errorStyles}>{errors.password.message}</p>
+              )}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}

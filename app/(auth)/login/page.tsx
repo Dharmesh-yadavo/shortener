@@ -6,24 +6,42 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { GoogleIcon } from "@/components/common/GoogleIcon";
 import { GlassBackground } from "@/components/common/GlassBackground";
-import { ChangeEvent, useState } from "react";
-
-interface LoginFormData {
-  email: string;
-  password: string;
-}
+import { LoginFormAction } from "@/features/auth/server/auth.action";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginUserData, loginUserSchema } from "@/features/auth/auth.schema";
+import { redirect } from "next/navigation";
 
 const LoginPage: React.FC = () => {
-  const [formData, setFormData] = useState<LoginFormData>({
-    email: "",
-    password: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(loginUserSchema),
   });
 
-  const handleInputChange = (name: string, value: string) => {
-    setFormData((prev) => {
-      return { ...prev, [name]: value };
-    });
+  const onSubmit = async (data: LoginUserData) => {
+    const result = await LoginFormAction(data);
+
+    if (result.status === "success") {
+      toast.success(result.message);
+      redirect("/");
+    } else {
+      toast.error(result.message);
+    }
   };
+
+  const inputStyles = (hasError: boolean) => `
+    h-11 px-4 bg-slate-50 border-slate-200 rounded-lg transition-all duration-200
+    focus-visible:ring-2 focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-offset-0
+    ${hasError ? "border-red-500 bg-red-50/50 focus-visible:ring-red-500/10 focus-visible:border-red-500" : ""}
+  `;
+
+  const labelStyles =
+    "text-[12px] font-semibold text-slate-600 uppercase tracking-tight";
+  const errorStyles = "text-[12px] font-medium text-red-500 mt-1";
 
   return (
     <main className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
@@ -40,32 +58,32 @@ const LoginPage: React.FC = () => {
             </p>
           </div>
 
-          <form className="space-y-4 text-left">
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="email"
-                className="text-slate-700 font-bold ml-1 text-[11px] uppercase tracking-wider"
-              >
-                Email Address
-              </Label>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4 text-left"
+          >
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="email" className={labelStyles}>
+                  Email Address
+                </Label>
+              </div>
+
               <Input
                 type="email"
-                name="email"
-                required
-                value={formData.email}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleInputChange("email", e.target.value)
-                }
+                {...register("email")}
                 placeholder="name@example.com"
-                className="h-11 text-slate-500 bg-white/60 border-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-400 placeholder:text-slate-300 text-sm"
+                className={inputStyles(!!errors.email)}
               />
+
+              {errors.email && (
+                <p className={errorStyles}>{errors.email.message}</p>
+              )}
             </div>
 
             <div className="space-y-1.5">
               <div className="flex justify-between items-center px-1">
-                <Label className="text-slate-700 font-bold text-[11px] uppercase tracking-wider">
-                  Password
-                </Label>
+                <Label className={labelStyles}>Password</Label>
                 <Link
                   href="#"
                   className="text-emerald-500 text-[10px] font-bold hover:underline"
@@ -75,15 +93,14 @@ const LoginPage: React.FC = () => {
               </div>
               <Input
                 type="password"
-                name="password"
                 required
-                value={formData.password}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleInputChange("password", e.target.value)
-                }
+                {...register("password")}
                 placeholder="••••••••"
-                className="h-11 bg-white/60 text-slate-500 border-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-400 placeholder:text-slate-300 text-sm"
+                className={inputStyles(!!errors.password)}
               />
+              {errors.password && (
+                <p className={errorStyles}>{errors.password.message}</p>
+              )}
             </div>
 
             <Button
@@ -115,7 +132,7 @@ const LoginPage: React.FC = () => {
             <p className="text-xs text-slate-500 font-medium">
               Don&lsquo;t have an account?{" "}
               <Link
-                href="/signup"
+                href="/register"
                 className="text-emerald-500 font-bold hover:underline"
               >
                 Sign Up
