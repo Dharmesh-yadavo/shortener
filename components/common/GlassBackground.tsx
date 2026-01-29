@@ -4,7 +4,7 @@ export const GlassBackground = ({ opacity }: { opacity: number }) => {
       {/* Top-right emerald glow */}
       <div
         style={{ opacity: opacity }}
-        className="blob absolute top-[-10%] right-[-5%] h-150 w-150 rounded-full bg-emerald-400/40 blur-[60px]"
+        className="blob absolute top-[-10%] right-[-5%] h-150 w-100 rounded-full bg-emerald-400/40 blur-[60px]"
       />
     </div>
   );
