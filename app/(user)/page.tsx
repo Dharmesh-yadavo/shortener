@@ -1,7 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { logoutUserAction } from "@/features/auth/server/auth.action";
-import { getCurrentUser } from "@/features/auth/server/auth.queries";
 import Noise from "@/components/Noise";
 import { GlassBackground } from "@/components/common/GlassBackground";
 import ToolSwitcher from "@/components/user/ToolSwitcher";
@@ -9,11 +7,15 @@ import { Link, Box, Triangle, Pentagon, LayoutGrid } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Header } from "@/components/user/Header";
+import { useRouter } from "next/navigation";
 
 const Home = () => {
+  const router = useRouter();
   const [mode, setMode] = useState("URL");
 
-  // const user = await getCurrentUser();
+  const handleAction = () => {
+    router.push("/login");
+  };
 
   return (
     <div className="min-h-screen relative overflow-x-hidden font-serif">
@@ -55,7 +57,10 @@ const Home = () => {
                       placeholder="Paste your long URL here..."
                     />
                   </div>
-                  <Button className="h-14 px-8 bg-emerald-400 hover:bg-emerald-500 text-slate-900 font-bold rounded-xl shadow-md transition-all">
+                  <Button
+                    onClick={handleAction}
+                    className="h-14 px-8 bg-emerald-400 hover:bg-emerald-500 text-slate-900 font-bold rounded-xl shadow-md transition-all"
+                  >
                     Shorten
                   </Button>
                 </>
@@ -65,7 +70,10 @@ const Home = () => {
                     className="w-full h-14 pr-4 rounded-lg placeholder:text-stone-400 focus-visible:ring-2 focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-offset-0"
                     placeholder="Enter text or URL for QR code..."
                   />
-                  <Button className="h-14 px-8 bg-emerald-400 hover:bg-emerald-500 text-slate-900 font-bold rounded-xl shadow-md transition-all">
+                  <Button
+                    onClick={handleAction}
+                    className="h-14 px-8 bg-emerald-400 hover:bg-emerald-500 text-slate-900 font-bold rounded-xl shadow-md transition-all"
+                  >
                     Generate QR
                   </Button>
                 </div>

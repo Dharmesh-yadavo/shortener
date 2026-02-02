@@ -27,7 +27,7 @@ const LoginPage: React.FC = () => {
 
     if (result.status === "success") {
       toast.success(result.message);
-      redirect("/");
+      redirect("/dashboard");
     } else {
       toast.error(result.message);
     }
