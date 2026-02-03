@@ -15,6 +15,13 @@
       "when": 1769539869056,
       "tag": "0001_charming_garia",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1770113348252,
+      "tag": "0002_late_charles_xavier",
+      "breakpoints": true
     }
   ]
 }
