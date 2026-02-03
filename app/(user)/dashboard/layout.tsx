@@ -6,7 +6,7 @@ const DashBoardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main className="flex-1 h-screen overflow-y-auto bg-[#F8FAFC] ">
+      <main className="flex-1 h-screen overflow-y-auto bg-[#F8FAFC] font-serif ">
         {children}
       </main>
     </SidebarProvider>

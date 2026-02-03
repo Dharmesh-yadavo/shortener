@@ -34,11 +34,11 @@ export const AppSidebar = () => {
   const pathname = usePathname();
 
   return (
-    <Sidebar className="text-stone-600 border-r border-zinc-200">
-      <SidebarHeader className="p-2">
+    <Sidebar className="text-stone-600 border-r border-zinc-200 font-sans">
+      <SidebarHeader className="p-4 items-center">
         <div className="flex items-center gap-3 px-2 py-4">
-          <span className="text-lg font-bold text-emerald-500">
-            Shortener.io
+          <span className="text-lg font-bold text-black font-serif ">
+            Shorten.io
           </span>
         </div>
       </SidebarHeader>
@@ -58,13 +58,11 @@ export const AppSidebar = () => {
                       className={cn(
                         "relative h-12 px-4 rounded-lg font-semibold transition-all duration-200",
                         "text-stone-600 hover:bg-stone-100",
-                        // Active state matching your blue photo
                         isActive &&
                           "bg-[#EDF3FF] text-blue-700 hover:bg-[#EDF3FF]",
                       )}
                     >
                       <Link href={item.url} className="flex items-center gap-3">
-                        {/* The Blue Indicator Bar on the far left */}
                         {isActive && (
                           <div className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full bg-blue-700" />
                         )}

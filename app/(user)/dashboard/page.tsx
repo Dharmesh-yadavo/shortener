@@ -11,7 +11,8 @@ const Dashboard = () => {
   const [mode, setMode] = useState("URL");
 
   return (
-    <div className="max-w-4xl mx-auto p-6 md:p-10 space-y-10">
+    <div className="max-w-4xl mx-auto p-6 md:p-10 space-y-10 ">
+      {/* main heading text */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
           {mode === "URL" ? "Shorten a long link" : "Create a QR Code"}
@@ -21,6 +22,7 @@ const Dashboard = () => {
         </p>
       </div>
 
+      {/* Pill box design here   */}
       <div className="flex justify-center">
         <div className="inline-flex p-1 gap-3 rounded-full relative ">
           <button
@@ -60,17 +62,17 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8">
-        {mode === "URL" ? (
-          <>
-            <UrlShortener key="url" />
-          </>
-        ) : (
-          <QrGenerator key="qr" />
-        )}
-      </div>
+      {/* shortLink and QR card toggle */}
+      {mode === "URL" ? (
+        <>
+          <UrlShortener key="url" />
+        </>
+      ) : (
+        <QrGenerator key="qr" />
+      )}
+      {/* <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-8"></div> */}
 
-      {/* Stats  */}
+      {/* stats of dashboard page */}
       <DashboardStats topLink="https://example.com/my-long-url" clicks={20} />
     </div>
   );

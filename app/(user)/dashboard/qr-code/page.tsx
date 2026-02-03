@@ -5,7 +5,7 @@ import { Search, Plus, Filter, Grid, List as ListIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { QrCard } from "@/components/user/dashboard/QrCard";
+import { QrCard } from "@/components/user/dashboard/Qr-code/QrCard";
 
 const categories = ["All Codes", "Personal", "Marketing", "Events"];
 

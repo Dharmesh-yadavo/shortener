@@ -10,7 +10,7 @@ export const UrlShortener = () => {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
-      className="space-y-6"
+      className="bg-white rounded-2xl border border-slate-200 shadow-xs p-8"
     >
       <div className="space-y-4">
         <label className="text-sm font-bold text-slate-700 block">
@@ -22,7 +22,7 @@ export const UrlShortener = () => {
               <LinkIcon className="text-slate-400" size={20} />
             </div>
             <Input
-              className="w-full h-12 pl-11 rounded-md border-slate-200 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full h-12 pl-11 rounded-md border-slate-200 "
               placeholder="https://example.com/my-long-url"
             />
           </div>
@@ -32,7 +32,7 @@ export const UrlShortener = () => {
         </div>
       </div>
 
-      {/* Unique Footer for Links */}
+      {/* Footer for Links */}
       <div className="flex items-center justify-between pt-4 border-t border-slate-50">
         <div className="flex items-center gap-2 text-xs text-slate-500">
           <div className="w-4 h-4 rounded bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] font-bold">
