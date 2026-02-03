@@ -40,7 +40,6 @@ export const shortLinkTable = mysqlTable("short_link", {
   clicks: int().default(0).notNull(),
   isActive: boolean("is_active").default(true).notNull(),
   password: varchar({ length: 255 }),
-  expiresAt: timestamp("expires_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });

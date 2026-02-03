@@ -4,20 +4,20 @@ import crypto from "crypto";
 import { getCurrentUser } from "../auth/auth.queries";
 import { redirect } from "next/navigation";
 import { shortLinkTable } from "@/drizzle/schema";
+import { shortenerUserData } from "./users.schema";
 
-export const shortLinkAction = async (formData: FormData) => {
+export const shortLinkAction = async (data: shortenerUserData) => {
   const user = await getCurrentUser();
-  if (!user) return redirect("/");
+  if (!user || !user.id) return redirect("/");
 
-  const url = formData.get("url") as string;
+  const { url } = data;
   if (!url) return { error: "URL is required" };
 
-  const shortCode = crypto.randomBytes(6).toString("hex");
+  const shortCode = crypto.randomBytes(4).toString("hex");
   console.log(shortCode);
 
   try {
-    // 3. Insert into DB - MUST include the userId
-    const [res] = await db.insert(shortLinkTable).values({
+    await db.insert(shortLinkTable).values({
       userId: user.id,
       url: url,
       shortCode,
@@ -26,7 +26,10 @@ export const shortLinkAction = async (formData: FormData) => {
     return {
       status: "success",
       message: "Short Link Generated",
-      data: res,
+      data: {
+        shortCode: shortCode,
+        url: url,
+      },
     };
   } catch (error) {
     console.error("Failed to create link:", error);
