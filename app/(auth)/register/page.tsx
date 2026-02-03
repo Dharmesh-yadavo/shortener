@@ -7,15 +7,15 @@ import { GoogleIcon } from "@/components/common/GoogleIcon";
 import { Eye, EyeOff } from "lucide-react";
 import { GlassBackground } from "@/components/common/GlassBackground";
 import { toast } from "sonner";
-import { registrationAction } from "@/features/auth/server/auth.action";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { redirect } from "next/navigation";
 import {
   RegisterUserData,
   registerUserSchema,
-} from "@/features/auth/auth.schema";
-import { useState } from "react";
-import { redirect } from "next/navigation";
+} from "@/server/auth/auth.schema";
+import { registrationAction } from "@/server/auth/auth.action";
 
 const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);

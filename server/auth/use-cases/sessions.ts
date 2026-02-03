@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { cookies, headers } from "next/headers";
 import { getIPAddress } from "./location";
-import { sessions, users } from "@/drizzle/schema";
+import { sessionTable, users } from "@/drizzle/schema";
 import { db } from "@/config/db";
 import { SESSION_LIFETIME, SESSION_REFRESH_TIME } from "@/config/constant";
 import { eq } from "drizzle-orm";
@@ -25,7 +25,7 @@ const createUserSession = async ({
 }: CreateSessionData) => {
   const hashedToken = crypto.createHash("sha-256").update(token).digest("hex");
 
-  const [session] = await db.insert(sessions).values({
+  const [session] = await db.insert(sessionTable).values({
     id: hashedToken,
     userId,
     expiresAt: new Date(Date.now() + SESSION_LIFETIME * 1000),
@@ -67,19 +67,19 @@ export const validateSessionAndGetUser = async (session: string) => {
     .select({
       id: users.id,
       session: {
-        id: sessions.id,
-        expiresAt: sessions.expiresAt,
-        userAgent: sessions.userAgent,
-        ip: sessions.ip,
+        id: sessionTable.id,
+        expiresAt: sessionTable.expiresAt,
+        userAgent: sessionTable.userAgent,
+        ip: sessionTable.ip,
       },
       name: users.name,
       email: users.email,
       createdAt: users.createdAt,
       updatedAt: users.updatedAt,
     })
-    .from(sessions)
-    .where(eq(sessions.id, hashedToken))
-    .innerJoin(users, eq(users.id, sessions.userId));
+    .from(sessionTable)
+    .where(eq(sessionTable.id, hashedToken))
+    .innerJoin(users, eq(users.id, sessionTable.userId));
 
   if (!user) return null;
 
@@ -94,16 +94,16 @@ export const validateSessionAndGetUser = async (session: string) => {
     user.session.expiresAt.getTime() - SESSION_REFRESH_TIME * 1000
   ) {
     await db
-      .update(sessions)
+      .update(sessionTable)
       .set({
         expiresAt: new Date(Date.now() + SESSION_LIFETIME * 1000),
       })
-      .where(eq(sessions.id, user.session.id));
+      .where(eq(sessionTable.id, user.session.id));
   }
 
   return user;
 };
 
 export const invalidateSession = async (id: string) => {
-  await db.delete(sessions).where(eq(sessions.id, id));
+  await db.delete(sessionTable).where(eq(sessionTable.id, id));
 };

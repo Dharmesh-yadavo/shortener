@@ -6,12 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { GoogleIcon } from "@/components/common/GoogleIcon";
 import { GlassBackground } from "@/components/common/GlassBackground";
-import { LoginFormAction } from "@/features/auth/server/auth.action";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginUserData, loginUserSchema } from "@/features/auth/auth.schema";
 import { redirect } from "next/navigation";
+import { LoginFormAction } from "@/server/auth/auth.action";
+import { LoginUserData, loginUserSchema } from "@/server/auth/auth.schema";
 
 const LoginPage: React.FC = () => {
   const {

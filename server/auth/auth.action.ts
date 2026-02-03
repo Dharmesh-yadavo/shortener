@@ -9,7 +9,7 @@ import {
   loginUserSchema,
   RegisterUserData,
   registerUserSchema,
-} from "../auth.schema";
+} from "./auth.schema";
 import {
   createSessionAndSetCookies,
   invalidateSession,
