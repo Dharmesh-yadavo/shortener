@@ -1,9 +1,9 @@
 "use server";
 import { db } from "@/config/db";
-import { shortLinkTable } from "@/drizzle/schema";
 import crypto from "crypto";
 import { getCurrentUser } from "../auth/auth.queries";
 import { redirect } from "next/navigation";
+import { shortLinkTable } from "@/drizzle/schema";
 
 export const shortLinkAction = async (formData: FormData) => {
   const user = await getCurrentUser();
@@ -17,15 +17,19 @@ export const shortLinkAction = async (formData: FormData) => {
 
   try {
     // 3. Insert into DB - MUST include the userId
-    await db.insert(shortLinkTable).values({
+    const [res] = await db.insert(shortLinkTable).values({
       userId: user.id,
       url: url,
       shortCode,
     });
 
-    return { success: true, shortCode };
+    return {
+      status: "success",
+      message: "Short Link Generated",
+      data: res,
+    };
   } catch (error) {
     console.error("Failed to create link:", error);
-    return { error: "Something went wrong" };
+    return { status: "error", message: "Something went wrong" };
   }
 };
