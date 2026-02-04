@@ -15,6 +15,13 @@
       "when": 1770113348252,
       "tag": "0002_late_charles_xavier",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1770140232151,
+      "tag": "0003_curvy_arclight",
+      "breakpoints": true
     }
   ]
 }

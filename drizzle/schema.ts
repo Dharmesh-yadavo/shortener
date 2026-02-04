@@ -35,11 +35,14 @@ export const shortLinkTable = mysqlTable("short_link", {
   userId: int()
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }),
   url: text().notNull(),
   shortCode: varchar("short_code", { length: 10 }).unique().notNull(),
   clicks: int().default(0).notNull(),
   isActive: boolean("is_active").default(true).notNull(),
+  isHidden: boolean("is_hidden").default(false).notNull(),
   password: varchar({ length: 255 }),
+  deletedAt: timestamp("deleted_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });

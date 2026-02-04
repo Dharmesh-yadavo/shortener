@@ -16,9 +16,12 @@ export const shortLinkAction = async (data: shortenerUserData) => {
   const shortCode = crypto.randomBytes(4).toString("hex");
   console.log(shortCode);
 
+  const title = new URL(url).hostname.replace("www.", "");
+
   try {
     await db.insert(shortLinkTable).values({
       userId: user.id,
+      title,
       url: url,
       shortCode,
     });
