@@ -122,7 +122,7 @@ export const LinkRow = ({
         <div className="flex items-center justify-end gap-1 ">
           <button
             className="p-2.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
-            title="View Analytics"
+            title="Edit Link"
           >
             <Edit size={18} />
           </button>
