@@ -37,3 +37,25 @@ export const createLinkSchema = z.object({
 });
 
 export type CreateLinkData = z.infer<typeof createLinkSchema>;
+
+export const profileSettingsSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").max(255),
+  email: z.string().email("Invalid email address").max(255),
+});
+
+export type ProfileSettingsData = z.infer<typeof profileSettingsSchema>;
+
+export const updatePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(8, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(8, "New password must be at least 8 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type UpdatePasswordData = z.infer<typeof updatePasswordSchema>;

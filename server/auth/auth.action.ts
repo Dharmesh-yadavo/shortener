@@ -37,7 +37,8 @@ export const registrationAction = async (data: RegisterUserData) => {
       .insert(users)
       .values({ name, email, password: hashPassword });
 
-    await createSessionAndSetCookies(res.insertId);
+    const userId = res.insertId;
+    await createSessionAndSetCookies(userId);
 
     return {
       status: "success",

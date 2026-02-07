@@ -13,14 +13,15 @@ export const users = mysqlTable("users", {
   name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
   password: varchar({ length: 255 }).notNull(),
+  image: varchar({ length: 255 }),
   deletedAt: timestamp("deleted_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
 
 export const sessionTable = mysqlTable("sessions", {
-  id: varchar({ length: 255 }).primaryKey(),
-  userId: int()
+  id: varchar("id", { length: 255 }).primaryKey(),
+  userId: int("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   userAgent: text("user_agent").notNull(),

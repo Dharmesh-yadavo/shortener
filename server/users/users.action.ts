@@ -3,11 +3,15 @@ import { db } from "@/config/db";
 import crypto from "crypto";
 import { getCurrentUser } from "../auth/auth.queries";
 import { redirect } from "next/navigation";
-import { shortLinkTable } from "@/drizzle/schema";
+import { shortLinkTable, users } from "@/drizzle/schema";
 import {
   CreateLinkData,
   EditFormData,
+  ProfileSettingsData,
+  profileSettingsSchema,
   shortenerUserData,
+  UpdatePasswordData,
+  updatePasswordSchema,
 } from "./users.schema";
 import { and, eq, ne, sql } from "drizzle-orm";
 import argon2 from "argon2";
@@ -181,5 +185,95 @@ export const createLinkAction = async (
   } catch (error) {
     console.error(error);
     return { status: "error", message: "Failed to create link" };
+  }
+};
+
+export const profileSettingAction = async ({
+  data,
+  userId,
+}: {
+  data: ProfileSettingsData;
+  userId: number;
+}) => {
+  try {
+    const result = profileSettingsSchema.safeParse(data);
+
+    if (!result.success) {
+      return {
+        status: "error",
+        message: result.error.issues[0].message,
+      };
+    }
+
+    const { name, email } = result.data;
+
+    await db
+      .update(users)
+      .set({
+        name: name,
+        email: email,
+      })
+      .where(eq(users.id, userId));
+
+    return {
+      status: "success",
+      message: "Profile updated successfully",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      status: "error",
+      message: "An unexpected error occurred while updating your profile",
+    };
+  }
+};
+
+export const updatePasswordAction = async ({
+  data,
+  userId,
+}: {
+  data: UpdatePasswordData;
+  userId: number;
+}) => {
+  try {
+    const result = updatePasswordSchema.safeParse(data);
+    if (!result.success)
+      return { status: "error", message: result.error.issues[0].message };
+
+    const { currentPassword, newPassword } = result.data;
+
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    const isMatch = await argon2.verify(user.password, currentPassword);
+    if (!isMatch)
+      return { status: "error", message: "Incorrect current password" };
+
+    const hashedPassword = await argon2.hash(newPassword);
+
+    await db
+      .update(users)
+      .set({ password: hashedPassword })
+      .where(eq(users.id, userId));
+
+    return { status: "success", message: "Password updated successfully" };
+  } catch (error) {
+    console.error(error);
+    return { status: "error", message: "Failed to update password" };
+  }
+};
+
+export const deleteAccountAction = async (userId: number) => {
+  try {
+    //
+    await db.delete(users).where(eq(users.id, userId));
+
+    return { status: "success", message: "Account deleted" };
+  } catch (error) {
+    console.error(error);
+    return { status: "error", message: "Could not delete account" };
   }
 };
