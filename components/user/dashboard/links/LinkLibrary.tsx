@@ -18,11 +18,20 @@ interface LinkLibraryProps {
 
 export const LinkLibrary = ({ links }: LinkLibraryProps) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewFilter, setViewFilter] = useState<"active" | "hidden">("active");
 
   // TypeScript now knows 'link' has 'url' and other properties
-  const filteredLinks = links.filter((link) =>
-    link.url.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredLinks = links.filter((link) => {
+    const matchesSearch =
+      link.url.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      link.title?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Filter based on isHidden property
+    const matchesVisibility =
+      viewFilter === "active" ? !link.isHidden : link.isHidden;
+
+    return matchesSearch && matchesVisibility;
+  });
 
   return (
     <div className="max-w-6xl mx-auto p-6 lg:p-10 space-y-8">
@@ -37,6 +46,28 @@ export const LinkLibrary = ({ links }: LinkLibraryProps) => {
           </p>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+            <button
+              onClick={() => setViewFilter("active")}
+              className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${
+                viewFilter === "active"
+                  ? "bg-white text-blue-600 shadow-sm"
+                  : "text-slate-400 hover:text-slate-600"
+              }`}
+            >
+              Active
+            </button>
+            <button
+              onClick={() => setViewFilter("hidden")}
+              className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${
+                viewFilter === "hidden"
+                  ? "bg-white text-amber-600 shadow-sm"
+                  : "text-slate-400 hover:text-slate-600"
+              }`}
+            >
+              Hidden
+            </button>
+          </div>
           <div className="relative group flex-1 sm:w-72">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"
