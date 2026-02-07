@@ -9,8 +9,6 @@ import {
   BarChart3,
   Pencil,
   QrCode,
-  Share2,
-  Tag,
   Lock,
   Globe,
   ExternalLink,
@@ -23,6 +21,13 @@ import {
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import { handleDeleteAction } from "@/server/users/users.action";
+import { toast } from "sonner";
+import { PasswordModal } from "./PasswordModal";
+import { ShareDialog } from "./ShareDialog";
+import { title } from "process";
 
 export type Shortlink = InferSelectModel<typeof shortLinkTable>;
 
@@ -79,6 +84,17 @@ export const DetailedlinkComp = ({ links }: DetailedLinksProps) => {
       ? `${window.location.origin}/${links.shortCode}`
       : `/${links.shortCode}`;
 
+  const handleDelete = async (shortCode: string) => {
+    const result = await handleDeleteAction(shortCode);
+
+    if (result.status === "success") {
+      toast.success(result.message);
+      redirect("/dashboard/links");
+    } else {
+      toast.error(result.message);
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-5 font-sans">
       {/* 1. HEADER SECTION */}
@@ -104,12 +120,6 @@ export const DetailedlinkComp = ({ links }: DetailedLinksProps) => {
                 <h1 className="text-xl font-black text-slate-900 tracking-tight">
                   {links.title || "Untitled Link"}
                 </h1>
-                <Badge
-                  variant="secondary"
-                  className="bg-blue-50/50 text-blue-600 border-none font-bold text-[9px] px-2 h-4 uppercase"
-                >
-                  <Tag size={10} className="mr-1" /> NO TAGS
-                </Badge>
               </div>
             </div>
 
@@ -129,7 +139,7 @@ export const DetailedlinkComp = ({ links }: DetailedLinksProps) => {
                   {copied ? <Check size={14} /> : <Copy size={14} />}
                 </button>
               </div>
-              <p className="text-slate-400 text-xs flex items-center gap-2 max-w-xl truncate">
+              <p className="text-slate-400 text-xs max-w-xl truncate">
                 <span className="text-slate-300 font-bold uppercase text-[9px]">
                   Target:
                 </span>{" "}
@@ -143,22 +153,22 @@ export const DetailedlinkComp = ({ links }: DetailedLinksProps) => {
               variant="outline"
               size="icon"
               className="h-9 w-9 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 border-slate-200 transition-all"
+              asChild
             >
-              <Pencil size={16} />
+              <Link href={`/dashboard/links/${links.shortCode}/edit`}>
+                <Pencil size={16} />
+              </Link>
             </Button>
             <Button
               variant="outline"
               size="icon"
               className="h-9 w-9 text-slate-400 hover:bg-red-50 hover:text-red-600 border-slate-200 transition-all"
+              onClick={() => handleDelete(links.shortCode)}
             >
               <Trash2 size={16} />
             </Button>
-            <Button
-              variant="outline"
-              className="h-9 px-4 text-slate-600 font-bold hover:bg-blue-50 hover:text-blue-600 border-slate-200 transition-all"
-            >
-              <Share2 size={16} className="mr-2" /> Share
-            </Button>
+            {/* Share Dialof functionality */}
+            <ShareDialog shortUrl={shortUrl} title={title} />
           </div>
         </div>
 
@@ -216,22 +226,26 @@ export const DetailedlinkComp = ({ links }: DetailedLinksProps) => {
               </div>
               <Badge
                 variant="outline"
-                className={`font-bold px-2 py-0 h-4 text-[8px] tracking-widest border-none ${links.password ? "bg-amber-50 text-amber-600" : "bg-emerald-50 text-emerald-600"}`}
+                className={`font-bold px-2 py-0 h-4 text-[8px] tracking-widest border-none ${
+                  links.password
+                    ? "bg-amber-50 text-amber-600"
+                    : "bg-emerald-50 text-emerald-600"
+                }`}
               >
                 {links.password ? "LOCKED" : "PUBLIC"}
               </Badge>
               <p className="text-[11px] text-slate-500 leading-snug font-medium">
                 {links.password
                   ? "Requires a password to redirect."
-                  : "Accessible to everyone publically."}
+                  : "Accessible to everyone publicly."}
               </p>
             </div>
-            <Button
-              variant="outline"
-              className="w-full h-9 font-bold border-slate-200 rounded-lg uppercase text-[9px] tracking-widest hover:bg-slate-50"
-            >
-              {links.password ? "Change" : "Set Password"}
-            </Button>
+
+            {/* PASSING DATA TO MODAL */}
+            <PasswordModal
+              shortCode={links.shortCode}
+              hasPassword={!!links.password}
+            />
           </CardContent>
         </Card>
 
@@ -266,16 +280,18 @@ export const DetailedlinkComp = ({ links }: DetailedLinksProps) => {
               </div>
             </div>
 
-            <Button
-              variant="link"
-              className="p-0 h-auto text-emerald-600 font-bold text-[10px] justify-start hover:no-underline group uppercase tracking-wider"
-            >
-              Full Analytics{" "}
-              <ArrowUpRight
-                size={12}
-                className="ml-1 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
-              />
-            </Button>
+            <Link href={"/dashboard/analytics"}>
+              <Button
+                variant="link"
+                className="p-0 h-auto text-emerald-600 font-bold text-[10px] justify-start hover:no-underline group uppercase tracking-wider"
+              >
+                Full Analytics{" "}
+                <ArrowUpRight
+                  size={12}
+                  className="ml-1 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+                />
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

@@ -8,7 +8,7 @@ const LinksDetailPage = async ({
 }) => {
   const { shortCode } = await params;
   const linkDetails = await getLinkDetails(shortCode);
-  console.log(linkDetails);
+  // console.log(linkDetails);
 
   return <DetailedlinkComp links={linkDetails} />;
 };

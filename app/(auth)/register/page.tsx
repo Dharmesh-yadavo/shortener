@@ -16,6 +16,7 @@ import {
   registerUserSchema,
 } from "@/server/auth/auth.schema";
 import { registrationAction } from "@/server/auth/auth.action";
+import Link from "next/link";
 
 const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -148,12 +149,12 @@ const SignupPage: React.FC = () => {
 
           <p className="mt-6 flex justify-center items-center text-xs text-slate-500">
             Already have an account?{" "}
-            <a
+            <Link
               href="/login"
               className="text-emerald-500 font-bold hover:underline"
             >
               Log In
-            </a>
+            </Link>
           </p>
         </CardContent>
       </Card>

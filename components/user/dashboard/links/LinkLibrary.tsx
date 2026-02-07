@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { LinkRow } from "@/components/user/dashboard/links/LinkRow";
 import { InferSelectModel } from "drizzle-orm";
 import { shortLinkTable } from "@/drizzle/schema";
+import Link from "next/link";
 
 // Type definition
 export type ShortLink = InferSelectModel<typeof shortLinkTable>;
@@ -47,10 +48,12 @@ export const LinkLibrary = ({ links }: LinkLibraryProps) => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button className="bg-blue-400 hover:bg-blue-500 text-white font-bold h-11 px-6 rounded-xl shadow-lg shadow-blue-500/20 flex gap-2 active:scale-95 transition-all">
-            <Plus size={20} />{" "}
-            <span className="hidden sm:inline">New Link</span>
-          </Button>
+          <Link href={"/dashboard/links/create"}>
+            <Button className="bg-blue-500 hover:bg-blue-600 text-white font-bold h-11 px-6 rounded-xl shadow-lg shadow-blue-500/20 flex gap-2 active:scale-95 transition-all">
+              <Plus size={20} />{" "}
+              <span className="hidden sm:inline">Create Link</span>
+            </Button>
+          </Link>
         </div>
       </div>
 
@@ -79,7 +82,12 @@ export const LinkLibrary = ({ links }: LinkLibraryProps) => {
                 filteredLinks.map((link) => (
                   <LinkRow
                     key={link.id}
-                    title={new URL(link.url).hostname.replace("www.", "")}
+                    title={
+                      link.title
+                        ? link.title
+                        : new URL(link.url).hostname.replace("www.", "") +
+                          " - Untitled"
+                    }
                     url={link.url}
                     shortUrl={`${process.env.NEXT_PUBLIC_SITE_URL}/${link.shortCode}`}
                     clicks={link.clicks}
@@ -90,7 +98,7 @@ export const LinkLibrary = ({ links }: LinkLibraryProps) => {
                       year: "numeric",
                       timeZone: "UTC",
                     })}
-                    status={link.isActive ? "Active" : "Inactive"}
+                    currentState={link.isHidden}
                   />
                 ))
               ) : (

@@ -1,11 +1,4 @@
-import {
-  CheckCircle2,
-  Copy,
-  Edit,
-  Globe,
-  MousePointerClick,
-  Trash2,
-} from "lucide-react";
+import { CheckCircle2, Copy, Globe, MousePointerClick } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -19,7 +12,7 @@ interface LinkRowProps {
   clicks: number;
   shortCode: string;
   date: string;
-  status: "Active" | "Inactive";
+  currentState: boolean;
 }
 
 export const LinkRow = ({
@@ -29,7 +22,7 @@ export const LinkRow = ({
   clicks,
   shortCode,
   date,
-  // status,
+  currentState,
 }: LinkRowProps) => {
   const [copied, setCopied] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -80,9 +73,11 @@ export const LinkRow = ({
           </div>
           <div className="flex flex-col min-w-0">
             <div className="flex items-center gap-2">
-              <span className="font-extrabold text-slate-900 text-sm truncate">
-                {`${title} - Untitled`}
-              </span>
+              <Link href={`/dashboard/links/${shortCode}`}>
+                <span className="font-extrabold text-slate-900 text-sm truncate hover:underline">
+                  {title}
+                </span>
+              </Link>
               <CheckCircle2 size={14} className="text-blue-500 shrink-0" />
             </div>
             <span className="text-xs font-sans text-slate-400 truncate max-w-60 mt-0.5">
@@ -119,22 +114,7 @@ export const LinkRow = ({
         </div>
       </td>
       <td className="px-8 py-6 text-right">
-        <div className="flex items-center justify-end gap-1 ">
-          <button
-            className="p-2.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
-            title="Edit Link"
-          >
-            <Edit size={18} />
-          </button>
-          <button
-            className="p-2.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
-            title="Delete Link"
-          >
-            <Trash2 size={18} />
-          </button>
-          <div className="w-px h-4 bg-slate-200 mx-2" />
-          <DropDownAction linkId={shortCode} />
-        </div>
+        <DropDownAction shortCode={shortCode} currentState={currentState} />
       </td>
     </motion.tr>
   );
