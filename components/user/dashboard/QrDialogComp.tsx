@@ -22,24 +22,23 @@ export const QrDialogComp = ({
   onOpenChange,
   generatedLink,
 }: DialogType) => {
+  //
   const qrRef = useRef<HTMLDivElement>(null);
 
   const downloadQR = () => {
     const svg = qrRef.current?.querySelector("svg");
     if (!svg) return;
 
-    // Standard SVG to PNG conversion logic
     const svgData = new XMLSerializer().serializeToString(svg);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     const img = new Image();
 
     img.onload = () => {
-      // Give it some padding in the export
       canvas.width = img.width + 40;
       canvas.height = img.height + 40;
       if (ctx) {
-        ctx.fillStyle = "white"; // Background for the PNG
+        ctx.fillStyle = "white";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 20, 20);
       }

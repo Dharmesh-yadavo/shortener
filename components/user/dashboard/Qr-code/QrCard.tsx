@@ -1,76 +1,113 @@
 "use client";
 
-import { QrCode, Download, Share2, Eye, MoreHorizontal } from "lucide-react";
+import {
+  Download,
+  MoreHorizontal,
+  MousePointer2,
+  Link as LinkIcon,
+  Pencil,
+  BarChart3,
+} from "lucide-react";
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import QRCode from "react-qr-code";
+import { useRef } from "react";
+import Link from "next/link";
+import { QrDropDownAction } from "./QrDropDownAction";
 
-export const QrCard = ({ title, shortUrl, scans, type, color }: any) => {
+type QrItem = {
+  userId: number;
+  title: string | null;
+  url: string;
+  shortCode: string;
+  clicks: number;
+  isActive: boolean;
+  isHidden: boolean;
+  fgColor: string | null;
+  bgColor: string | null;
+  logoUrl: string | null;
+};
+
+export const QrCard = ({
+  title,
+  shortCode,
+  fgColor,
+  bgColor,
+  url,
+  clicks,
+  isHidden,
+}: QrItem) => {
+  const qrRef = useRef<HTMLDivElement>(null);
+  const fullUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/${shortCode}`
+      : shortCode;
+
   return (
     <motion.div
-      whileHover={{ y: -3 }}
-      className="bg-white rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md transition-all overflow-hidden group"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="group bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-all flex flex-col md:flex-row gap-10 items-start md:items-center"
     >
-      {/* 1. Smaller Preview Area */}
-      <div className="p-4 pb-0">
-        <div
-          className="aspect-square w-full rounded-xl flex items-center justify-center relative overflow-hidden"
-          style={{ backgroundColor: color + "15" }}
-        >
-          {/* Main QR Icon - Scaled down */}
-          <div className="bg-white p-2 rounded-lg shadow-sm border border-slate-50">
-            <QrCode size={64} className="text-slate-800" />
+      {/* 1. Left: QR Preview (Small & Square) */}
+      <div
+        ref={qrRef}
+        className="bg-white p-2 rounded-lg border border-slate-100 shadow-sm shrink-0"
+      >
+        <QRCode
+          value={fullUrl}
+          size={80}
+          fgColor={fgColor || "#000000"}
+          bgColor={bgColor || "#ffffff"}
+          level="H"
+        />
+      </div>
+
+      {/* 2. Middle: Info Section (Grows to fill space) */}
+      <div className="flex-1 min-w-0 space-y-2">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded uppercase tracking-wider">
+            QR Code
+          </span>
+          <h3 className="text-lg font-bold text-slate-900 truncate">{title}</h3>
+        </div>
+
+        <div className="flex items-center gap-2   transition-all">
+          <LinkIcon size={14} />
+          <p className="text-sm truncate font-medium font-sans">{url}</p>
+        </div>
+
+        {/* Badges Row */}
+        <div className="flex flex-wrap items-center gap-4 pt-1">
+          <div className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
+            <MousePointer2 size={12} className="text-slate-400" />
+            <span className="text-xs font-bold font-sans text-slate-700">
+              {clicks} scans
+            </span>
           </div>
 
-          {/* Hover Overlay */}
-          <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-            <button className="bg-white p-1.5 rounded-lg text-slate-900 hover:text-blue-600 transition-colors shadow-lg">
-              <Download size={14} />
-            </button>
-            <button className="bg-white p-1.5 rounded-lg text-slate-900 hover:text-blue-600 transition-colors shadow-lg">
-              <Share2 size={14} />
-            </button>
+          <div className="flex items-center gap-1.5 text-slate-400">
+            <LinkIcon size={12} />
+            <Link href={fullUrl}>
+              <span className="text-xs text-blue-500 font-sans font-bold hover:underline hover:text-blue-700 ">
+                {window.location.host}/{shortCode}
+              </span>
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* 2. Compact Content Area */}
-      <div className="p-4 space-y-3">
-        <div className="flex justify-between items-start">
-          <div className="min-w-0">
-            <h3 className="text-sm font-bold text-slate-900 truncate">
-              {title}
-            </h3>
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate mt-0.5">
-              {shortUrl}
-            </p>
-          </div>
-          <button className="text-slate-300 hover:text-slate-600 transition-colors">
-            <MoreHorizontal size={16} />
-          </button>
-        </div>
-
-        {/* 3. Tighter Footer */}
-        <div className="flex items-center justify-between pt-3 border-t border-slate-50">
-          <div className="flex items-center gap-1.5">
-            <Eye size={12} className="text-slate-400" />
-            <span className="text-[11px] font-bold text-slate-600">
-              {scans.toLocaleString()} scans
-            </span>
-          </div>
-
-          <span
-            className={cn(
-              "text-[9px] font-black px-1.5 py-0.5 rounded tracking-widest uppercase",
-              type === "DYNAMIC"
-                ? "bg-blue-50 text-blue-600"
-                : type === "VCARD"
-                  ? "bg-emerald-50 text-emerald-600"
-                  : "bg-slate-100 text-slate-500",
-            )}
-          >
-            {type}
-          </span>
-        </div>
+      {/* 3. Right: Action Icons */}
+      <div className="flex items-center gap-1 md:gap-2 shrink-0 self-end md:self-center">
+        <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+          <Pencil size={18} />
+        </button>
+        <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+          <Download size={18} />
+        </button>
+        <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+          <BarChart3 size={18} />
+        </button>
+        <QrDropDownAction shortCode={shortCode} currentState={isHidden} />
       </div>
     </motion.div>
   );
