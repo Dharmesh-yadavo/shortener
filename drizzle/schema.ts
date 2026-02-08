@@ -39,6 +39,7 @@ export const shortLinkTable = mysqlTable("short_link", {
   title: varchar("title", { length: 255 }),
   url: text().notNull(),
   shortCode: varchar("short_code", { length: 10 }).unique().notNull(),
+  type: varchar("type", { length: 20 }).default("link").notNull(),
   clicks: int().default(0).notNull(),
   isActive: boolean("is_active").default(true).notNull(),
   isHidden: boolean("is_hidden").default(false).notNull(),
@@ -58,6 +59,20 @@ export const clickLogs = mysqlTable("click_logs", {
   device: varchar("device", { length: 50 }),
   referrer: varchar("referrer", { length: 255 }).default("Direct"),
   clickedAt: timestamp("clicked_at").defaultNow().notNull(),
+});
+
+export const qrCodeTable = mysqlTable("qr_codes", {
+  id: int().primaryKey().autoincrement(),
+  linkId: int()
+    .notNull()
+    .references(() => shortLinkTable.id, { onDelete: "cascade" }),
+  userId: int()
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  fgColor: varchar({ length: 7 }).default("#000000"),
+  bgColor: varchar({ length: 7 }).default("#ffffff"),
+  logoUrl: varchar({ length: 255 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // A user can have a multiple short link

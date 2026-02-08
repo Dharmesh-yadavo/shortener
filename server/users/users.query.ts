@@ -13,7 +13,11 @@ export const getUserLinks = async ({ limit = 5 }) => {
     .select()
     .from(shortLinkTable)
     .where(
-      and(eq(shortLinkTable.userId, user.id), isNull(shortLinkTable.deletedAt)),
+      and(
+        eq(shortLinkTable.userId, user.id),
+        isNull(shortLinkTable.deletedAt),
+        eq(shortLinkTable.type, "link"),
+      ),
     )
     .orderBy(desc(shortLinkTable.createdAt))
     .limit(limit);

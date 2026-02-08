@@ -3,7 +3,7 @@ import { db } from "@/config/db";
 import crypto from "crypto";
 import { getCurrentUser } from "../auth/auth.queries";
 import { redirect } from "next/navigation";
-import { shortLinkTable, users } from "@/drizzle/schema";
+import { qrCodeTable, shortLinkTable, users } from "@/drizzle/schema";
 import {
   CreateLinkData,
   EditFormData,
@@ -25,7 +25,6 @@ export const shortLinkAction = async (data: shortenerUserData) => {
   if (!url) return { error: "URL is required" };
 
   const shortCode = crypto.randomBytes(4).toString("hex");
-  console.log(shortCode);
 
   const title = new URL(url).hostname.replace("www.", "");
 
@@ -275,5 +274,52 @@ export const deleteAccountAction = async (userId: number) => {
   } catch (error) {
     console.error(error);
     return { status: "error", message: "Could not delete account" };
+  }
+};
+
+//! Qr code :
+
+export const qrCodeAction = async (data: shortenerUserData) => {
+  const user = await getCurrentUser();
+  if (!user || !user.id) return redirect("/");
+
+  const { url } = data;
+  if (!url) return { status: "error", message: "URL is required" };
+
+  let title = "New Link";
+  try {
+    title = new URL(url).hostname.replace("www.", "");
+  } catch (e) {
+    console.error(e);
+    return { status: "error", message: "Invalid URL format" };
+  }
+
+  const shortCode = crypto.randomBytes(4).toString("hex");
+
+  try {
+    const [res] = await db.insert(shortLinkTable).values({
+      userId: user.id,
+      title,
+      url: url,
+      shortCode,
+      type: "qr",
+    });
+
+    await db.insert(qrCodeTable).values({
+      userId: user.id,
+      linkId: res.insertId,
+    });
+
+    return {
+      status: "success",
+      message: "Qr Code Generated Successfully",
+      data: {
+        shortCode: shortCode,
+        url: url,
+      },
+    };
+  } catch (error) {
+    console.error("Failed to create Qr Code:", error);
+    return { status: "error", message: "Something went wrong" };
   }
 };

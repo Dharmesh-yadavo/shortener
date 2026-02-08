@@ -14,7 +14,7 @@ type DialogType = {
   generatedLink: string | null;
 };
 
-export const DialogComp = ({
+export const UrlDialogComp = ({
   open,
   onOpenChange,
   generatedLink,

@@ -13,7 +13,7 @@ import {
 } from "@/server/users/users.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { DialogComp } from "./DialogComp";
+import { UrlDialogComp } from "./UrlDialogComp";
 
 export const UrlShortener = () => {
   const {
@@ -34,7 +34,7 @@ export const UrlShortener = () => {
 
     if (result.status === "success") {
       toast.success(result.message);
-      const fullUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/${result.data?.shortCode}`;
+      const fullUrl = `${window.location.origin}/${result.data?.shortCode}`;
       setGeneratedLink(fullUrl);
       setIsOpen(true);
       reset();
@@ -90,7 +90,7 @@ export const UrlShortener = () => {
         </div>
       </form>
 
-      <DialogComp
+      <UrlDialogComp
         open={isOpen}
         onOpenChange={setIsOpen}
         generatedLink={generatedLink}
