@@ -8,6 +8,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import {
+  handleDeleteAction,
+  toggleLinkVisibility,
+} from "@/server/users/users.action";
+import { toast } from "sonner";
+import { redirect } from "next/navigation";
 
 export const QrDropDownAction = ({
   shortCode,
@@ -23,9 +29,27 @@ export const QrDropDownAction = ({
   }: {
     shortCode: string;
     currentState: boolean;
-  }) => {};
+  }) => {
+    const result = await toggleLinkVisibility(shortCode, currentState);
 
-  const handleDelete = async (shortCode: string) => {};
+    if (result.status === "success") {
+      toast.success(result.message);
+      redirect("/dashboard/qr-code");
+    } else {
+      toast.error(result.message);
+    }
+  };
+
+  const handleDelete = async (shortCode: string) => {
+    const result = await handleDeleteAction(shortCode);
+
+    if (result.status === "success") {
+      toast.success(result.message);
+      redirect("/dashboard/qr-code");
+    } else {
+      toast.error(result.message);
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -43,6 +67,13 @@ export const QrDropDownAction = ({
         <Link href={`/dashboard/qr-code/${shortCode}`}>
           <DropdownMenuItem className="cursor-pointer gap-3 py-2.5">
             <Palette size={18} className="text-slate-500" />
+            <span className="font-medium text-slate-700">View QR Details</span>
+          </DropdownMenuItem>
+        </Link>
+
+        <Link href={`/dashboard/qr-code/${shortCode}/edit/customize`}>
+          <DropdownMenuItem className="cursor-pointer gap-3 py-2.5">
+            <Palette size={18} className="text-slate-500" />
             <span className="font-medium text-slate-700">Customize</span>
           </DropdownMenuItem>
         </Link>
@@ -54,15 +85,6 @@ export const QrDropDownAction = ({
           <EyeOff size={18} className="text-slate-500" />
           <span className="font-medium text-slate-700">Hide QR Code</span>
         </DropdownMenuItem>
-
-        <Link href={`/dashboard/links/${shortCode}`}>
-          <DropdownMenuItem className="cursor-pointer gap-3 py-2.5">
-            <QrCode size={18} className="text-slate-500" />
-            <span className="font-medium text-slate-700">
-              Short link details
-            </span>
-          </DropdownMenuItem>
-        </Link>
 
         <DropdownMenuSeparator className="my-1" />
 

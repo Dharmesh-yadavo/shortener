@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { QrCard } from "./QrCard";
 import { useState } from "react";
+import Link from "next/link";
 
 type QrItem = {
   userId: number;
@@ -51,9 +52,11 @@ export default function QrGallery({ qrs }: QrGalleryProps) {
             Manage and track your custom QR codes.
           </p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold h-11 px-6 rounded-xl shadow-lg shadow-blue-500/20">
-          <Plus size={20} className="mr-2" /> Create New QR
-        </Button>
+        <Link href={"/dashboard/qr-code/create"}>
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold h-11 px-6 rounded-xl shadow-lg shadow-blue-500/20">
+            <Plus size={20} className="mr-2" /> Create New QR
+          </Button>
+        </Link>
       </div>
 
       {/* Filter Tabs & Search */}

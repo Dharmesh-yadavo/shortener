@@ -1,8 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import {
   Download,
-  MoreHorizontal,
   MousePointer2,
   Link as LinkIcon,
   Pencil,
@@ -13,6 +13,7 @@ import QRCode from "react-qr-code";
 import { useRef } from "react";
 import Link from "next/link";
 import { QrDropDownAction } from "./QrDropDownAction";
+import { Button } from "@/components/ui/button";
 
 type QrItem = {
   userId: number;
@@ -35,12 +36,40 @@ export const QrCard = ({
   url,
   clicks,
   isHidden,
+  logoUrl,
 }: QrItem) => {
   const qrRef = useRef<HTMLDivElement>(null);
   const fullUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/${shortCode}`
       : shortCode;
+
+  const downloadQR = () => {
+    const svg = qrRef.current?.querySelector("svg");
+    if (!svg) return;
+
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+
+    img.onload = () => {
+      canvas.width = img.width + 40;
+      canvas.height = img.height + 40;
+      if (ctx) {
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 20, 20);
+      }
+
+      const pngFile = canvas.toDataURL("image/png");
+      const downloadLink = document.createElement("a");
+      downloadLink.download = `qr-code-${Date.now()}.png`;
+      downloadLink.href = pngFile;
+      downloadLink.click();
+    };
+    img.src = "data:image/svg+xml;base64," + btoa(svgData);
+  };
 
   return (
     <motion.div
@@ -51,7 +80,7 @@ export const QrCard = ({
       {/* 1. Left: QR Preview (Small & Square) */}
       <div
         ref={qrRef}
-        className="bg-white p-2 rounded-lg border border-slate-100 shadow-sm shrink-0"
+        className="bg-white relative p-2 rounded-lg border border-slate-100 shadow-sm shrink-0"
       >
         <QRCode
           value={fullUrl}
@@ -60,6 +89,24 @@ export const QrCard = ({
           bgColor={bgColor || "#ffffff"}
           level="H"
         />
+        {logoUrl && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div
+              className="w-5 h-5 rounded shadow-xs flex items-center justify-center overflow-hidden border"
+              style={{
+                backgroundColor: bgColor || "#ffffff",
+                borderColor: bgColor || "#ffffff",
+              }}
+            >
+              <img
+                src={logoUrl}
+                alt=""
+                className="max-w-full max-h-full object-contain"
+                onError={(e) => (e.currentTarget.style.display = "none")}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 2. Middle: Info Section (Grows to fill space) */}
@@ -98,15 +145,30 @@ export const QrCard = ({
 
       {/* 3. Right: Action Icons */}
       <div className="flex items-center gap-1 md:gap-2 shrink-0 self-end md:self-center">
-        <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-          <Pencil size={18} />
-        </button>
-        <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+        <Link href={`/dashboard/qr-code/${shortCode}/edit`}>
+          <Button
+            variant="ghost"
+            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+          >
+            <Pencil size={18} />
+          </Button>
+        </Link>
+
+        <Button
+          variant="ghost"
+          className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+          onClick={downloadQR}
+        >
           <Download size={18} />
-        </button>
-        <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-          <BarChart3 size={18} />
-        </button>
+        </Button>
+        <Link href={`/dashboard/qr-code/${shortCode}`}>
+          <Button
+            variant="ghost"
+            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+          >
+            <BarChart3 size={18} />
+          </Button>
+        </Link>
         <QrDropDownAction shortCode={shortCode} currentState={isHidden} />
       </div>
     </motion.div>

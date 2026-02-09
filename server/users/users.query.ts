@@ -4,8 +4,9 @@ import { qrCodeTable, shortLinkTable } from "@/drizzle/schema";
 import { getCurrentUser } from "../auth/auth.queries";
 import { desc, eq, and, isNull } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 
-export const getUserLinks = async ({ limit = 5 }) => {
+export const getUserLinks = cache(async ({ limit = 5 }) => {
   const user = await getCurrentUser();
   if (!user) return [];
 
@@ -21,9 +22,9 @@ export const getUserLinks = async ({ limit = 5 }) => {
     )
     .orderBy(desc(shortLinkTable.createdAt))
     .limit(limit);
-};
+});
 
-export const getLinkDetails = async (shortCode: string) => {
+export const getLinkDetails = cache(async (shortCode: string) => {
   const user = await getCurrentUser();
   if (!user) return redirect("/");
 
@@ -38,9 +39,9 @@ export const getLinkDetails = async (shortCode: string) => {
       ),
     );
   return res;
-};
+});
 
-export const getAllQr = async () => {
+export const getAllQr = cache(async () => {
   const user = await getCurrentUser();
   if (!user) return [];
 
@@ -67,4 +68,28 @@ export const getAllQr = async () => {
     )
     .innerJoin(qrCodeTable, eq(shortLinkTable.id, qrCodeTable.linkId))
     .orderBy(desc(shortLinkTable.createdAt));
+});
+
+export const getQrByShortCode = async (shortCode: string) => {
+  const [res] = await db
+    .select({
+      userId: shortLinkTable.userId,
+      linkId: shortLinkTable.id,
+      title: shortLinkTable.title,
+      url: shortLinkTable.url,
+      shortCode: shortLinkTable.shortCode,
+      clicks: shortLinkTable.clicks,
+      isActive: shortLinkTable.isActive,
+      isHidden: shortLinkTable.isHidden,
+      createdAt: shortLinkTable.createdAt,
+      type: shortLinkTable.type,
+      fgColor: qrCodeTable.fgColor,
+      bgColor: qrCodeTable.bgColor,
+      logoUrl: qrCodeTable.logoUrl,
+    })
+    .from(shortLinkTable)
+    .where(eq(shortLinkTable.shortCode, shortCode))
+    .innerJoin(qrCodeTable, eq(shortLinkTable.id, qrCodeTable.linkId));
+
+  return res;
 };

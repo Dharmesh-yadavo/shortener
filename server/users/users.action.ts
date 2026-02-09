@@ -323,3 +323,55 @@ export const qrCodeAction = async (data: shortenerUserData) => {
     return { status: "error", message: "Something went wrong" };
   }
 };
+
+export const updateQrAction = async ({
+  shortCode,
+  title,
+}: {
+  shortCode: string;
+  title: string;
+}) => {
+  try {
+    await db
+      .update(shortLinkTable)
+      .set({ title: title })
+      .where(eq(shortLinkTable.shortCode, shortCode));
+
+    return {
+      status: "success",
+      message: "Title Updated Successfully",
+    };
+  } catch (error) {
+    console.error(error);
+    return { status: "error", message: "Something went wrong" };
+  }
+};
+
+export const updateQrCustomizationAction = async ({
+  linkId,
+  fgColor,
+  bgColor,
+  logoUrl,
+}: {
+  linkId: number;
+  fgColor: string;
+  bgColor: string;
+  logoUrl: string;
+}) => {
+  try {
+    await db
+      .update(qrCodeTable)
+      .set({ fgColor, bgColor, logoUrl })
+      .where(eq(qrCodeTable.linkId, linkId));
+    return {
+      status: "success",
+      message: "QR customization Updated Successfully",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      status: "error",
+      message: "Failed to save customization",
+    };
+  }
+};

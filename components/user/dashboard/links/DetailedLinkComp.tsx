@@ -175,7 +175,7 @@ export const DetailedlinkComp = ({ links }: DetailedLinksProps) => {
         <div className="mt-6 pt-4 text-slate-400 text-[9px] font-black uppercase tracking-widest border-t flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Link Active</span>
+            <span>Link {links.isActive ? "Active" : "Deactive"}</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-slate-300">CREATED:</span>
