@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import { qrCodeTable, shortLinkTable, users } from "@/drizzle/schema";
 import {
   CreateLinkData,
+  CreateQrData,
+  createQrSchema,
   EditFormData,
   ProfileSettingsData,
   profileSettingsSchema,
@@ -373,5 +375,44 @@ export const updateQrCustomizationAction = async ({
       status: "error",
       message: "Failed to save customization",
     };
+  }
+};
+
+export const createQrAction = async ({ data }: { data: CreateQrData }) => {
+  const user = await getCurrentUser();
+  if (!user || !user.id) return redirect("/");
+
+  const { data: validateData, error } = createQrSchema.safeParse(data);
+  if (error) return { status: "ERROR", message: error.issues[0].message };
+
+  const { title, url, bgColor, fgColor, logoUrl } = validateData;
+  if (!url) return { status: "error", message: "URL is required" };
+
+  const shortCode = crypto.randomBytes(4).toString("hex");
+
+  try {
+    const [res] = await db.insert(shortLinkTable).values({
+      userId: user.id,
+      title,
+      url: url,
+      shortCode,
+      type: "qr",
+    });
+
+    await db.insert(qrCodeTable).values({
+      userId: user.id,
+      linkId: res.insertId,
+      bgColor,
+      fgColor,
+      logoUrl,
+    });
+
+    return {
+      status: "success",
+      message: "Qr Code Generated Successfully",
+    };
+  } catch (error) {
+    console.error("Failed to create Qr Code:", error);
+    return { status: "error", message: "Something went wrong" };
   }
 };

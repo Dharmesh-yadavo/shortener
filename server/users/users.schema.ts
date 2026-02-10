@@ -59,3 +59,27 @@ export const updatePasswordSchema = z
   });
 
 export type UpdatePasswordData = z.infer<typeof updatePasswordSchema>;
+
+export const createQrSchema = z.object({
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(50, "Title must be under 50 characters"),
+
+  url: z
+    .string()
+    .url("Please enter a valid URL (include http:// or https://)")
+    .min(1, "Destination URL is required"),
+
+  fgColor: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex color format"),
+
+  bgColor: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex color format"),
+
+  logoUrl: z.string().url("Invalid logo URL").optional().or(z.literal("")),
+});
+
+export type CreateQrData = z.infer<typeof createQrSchema>;
