@@ -26,8 +26,13 @@ export default async function RedirectPage({
   // 2. Extract detailed analytics data
   const ip = headerList.get("x-forwarded-for")?.split(",")[0] || "unknown";
   const referrer = headerList.get("referer") || "Direct";
-  const country = headerList.get("x-vercel-ip-country") || "Unknown"; // works on vercel devlopment
   const deviceType = device.type || "desktop";
+
+  const country = headerList.get("x-vercel-ip-country") || "Unknown"; // works on vercel devlopment
+  const city = headerList.get("x-vercel-ip-city") || "Unknown";
+  const region = headerList.get("x-vercel-ip-country-region") || "Unknown";
+  const latitude = headerList.get("x-vercel-ip-latitude") || "Unknown";
+  const longitude = headerList.get("x-vercel-ip-longitude") || "Unknown";
 
   // 3. Update clicks and log data in parallel
   await Promise.all([
@@ -40,6 +45,10 @@ export default async function RedirectPage({
       linkId: link.id,
       ipAddress: ip,
       country: country,
+      city: city,
+      region: region,
+      latitude: latitude,
+      longitude: longitude,
       device: deviceType,
       referrer: referrer,
     }),

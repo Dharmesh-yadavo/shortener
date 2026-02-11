@@ -26,7 +26,6 @@ export const EditComp = ({ links }: DetailedLinksProps) => {
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<EditFormData>({
     resolver: zodResolver(editLinkSchema),

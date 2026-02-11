@@ -6,6 +6,7 @@ import {
   timestamp,
   text,
   boolean,
+  decimal,
 } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
@@ -54,8 +55,12 @@ export const clickLogs = mysqlTable("click_logs", {
   linkId: int()
     .notNull()
     .references(() => shortLinkTable.id, { onDelete: "cascade" }),
-  ipAddress: varchar("ip_address", { length: 255 }), // For Unique Click tracking
+  ipAddress: varchar("ip_address", { length: 255 }),
   country: varchar("country", { length: 100 }).default("Unknown"),
+  city: varchar("city", { length: 100 }).default("Unknown"),
+  region: varchar("region", { length: 100 }).default("Unknown"),
+  latitude: decimal("latitude", { precision: 10, scale: 8 }),
+  longitude: decimal("longitude", { precision: 11, scale: 8 }),
   device: varchar("device", { length: 50 }),
   referrer: varchar("referrer", { length: 255 }).default("Direct"),
   clickedAt: timestamp("clicked_at").defaultNow().notNull(),

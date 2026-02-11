@@ -18,7 +18,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden font-serif">
+    <div className="min-h-screen relative overflow-x-hidden font-sans">
       <GlassBackground opacity={1} />
       <Noise />
 
