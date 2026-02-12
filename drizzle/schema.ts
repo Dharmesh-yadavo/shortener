@@ -7,6 +7,7 @@ import {
   text,
   boolean,
   decimal,
+  mysqlEnum,
 } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
@@ -15,6 +16,11 @@ export const users = mysqlTable("users", {
   email: varchar({ length: 255 }).notNull().unique(),
   password: varchar({ length: 255 }).notNull(),
   image: varchar({ length: 255 }),
+  stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
+  stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
+  plan: mysqlEnum("plan", ["free", "pro", "business"]).default("free"),
+  linksCreated: int("links_created").default(0),
+  qrsCreated: int("qrs_created").default(0),
   deletedAt: timestamp("deleted_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
