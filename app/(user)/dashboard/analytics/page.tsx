@@ -30,7 +30,7 @@ export default async function AnalyticsPage() {
       </div>
 
       {/* Metric Cards */}
-      <Grid numItemsSm={2} numItemsLg={4} className="gap-6">
+      <div className="gap-6 flex">
         <Card decoration="top" decorationColor="blue">
           <Flex justifyContent="start" className="space-x-4">
             <div className="p-2 bg-blue-100 rounded-lg">
@@ -80,7 +80,7 @@ export default async function AnalyticsPage() {
             </div>
           </Flex>
         </Card>
-      </Grid>
+      </div>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
