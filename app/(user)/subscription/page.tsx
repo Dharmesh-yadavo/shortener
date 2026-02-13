@@ -8,7 +8,7 @@ const SubscriptionPage = async () => {
   if (!user) return redirect("/");
   return (
     <>
-      <SubscriptionTable userId={user.id} userEmail={user.email} />;
+      <SubscriptionTable userId={user.id} userEmail={user.email} />
     </>
   );
 };
