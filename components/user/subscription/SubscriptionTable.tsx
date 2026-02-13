@@ -5,32 +5,6 @@ import { createCheckoutSession } from "@/server/subscription/action.stripe";
 import { Check, X } from "lucide-react";
 import { motion } from "framer-motion";
 
-// const PLANS = [
-//   {
-//     name: "Free",
-//     price: "$0",
-//     priceId: null,
-//     features: ["5 Links", "5 QRs"],
-//   },
-//   {
-//     name: "Pro",
-//     price: "$9",
-//     priceId: "price_1SzwtQIXXAX38UQrFhshyIaB",
-//     features: ["30 Links", "30 QRs", "Analytics Dashboard"],
-//   },
-//   {
-//     name: "Business",
-//     price: "$29",
-//     priceId: "price_1SzwttIXXAX38UQrXcdksKRn",
-//     features: [
-//       "Unlimited Links",
-//       "Unlimited QRs",
-//       "Analytics Dashboard",
-//       "API Access",
-//     ],
-//   },
-// ];
-
 const PLANS = [
   {
     name: "Free",

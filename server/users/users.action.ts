@@ -26,26 +26,53 @@ export const shortLinkAction = async (data: shortenerUserData) => {
   const { url } = data;
   if (!url) return { error: "URL is required" };
 
+  console.log(user);
+
   const shortCode = crypto.randomBytes(4).toString("hex");
 
   const title = new URL(url).hostname.replace("www.", "");
 
-  try {
-    await db.insert(shortLinkTable).values({
-      userId: user.id,
-      title,
-      url: url,
-      shortCode,
-    });
+  const limits = {
+    free: 5,
+    pro: 30,
+    business: Number.MAX_SAFE_INTEGER,
+  };
 
-    return {
-      status: "success",
-      message: "Short Link Generated",
-      data: {
-        shortCode: shortCode,
-        url: url,
-      },
-    };
+  const userPlan = (user.plan?.toLowerCase() || "free") as keyof typeof limits;
+  const maxLinks = limits[userPlan];
+  const currentLinks = user.qrsCreated ?? 0;
+
+  try {
+    if (currentLinks < maxLinks) {
+      return await db.transaction(async (tx) => {
+        await tx
+          .update(users)
+          .set({ linksCreated: sql`${users.linksCreated} + 1` })
+          .where(eq(users.id, user.id));
+
+        await tx.insert(shortLinkTable).values({
+          userId: user.id,
+          title,
+          url: url,
+          shortCode,
+        });
+
+        return {
+          status: "success",
+          message: "Short Link Generated",
+          data: {
+            shortCode: shortCode,
+            url: url,
+          },
+        };
+      });
+    } else {
+      return {
+        status: "error",
+        message:
+          "You've reached your plan's Short Link limit. Upgrade to create more!",
+      };
+    }
   } catch (error) {
     console.error("Failed to create link:", error);
     return { status: "error", message: "Something went wrong" };
@@ -169,23 +196,50 @@ export const createLinkAction = async (
   data: CreateLinkData,
   userId: number,
 ) => {
-  console.log(data);
-
   try {
-    await db.insert(shortLinkTable).values({
-      userId: userId,
-      title: data.title,
-      url: data.url,
-      shortCode: data.shortCode,
-    });
+    const user = await getCurrentUser();
+    if (!user || !user.id) return redirect("/");
 
-    return {
-      status: "success",
-      message: "Short Link created successfully",
+    const limits = {
+      free: 5,
+      pro: 30,
+      business: Number.MAX_SAFE_INTEGER,
     };
+
+    const userPlan = (user.plan?.toLowerCase() ||
+      "free") as keyof typeof limits;
+    const maxLinks = limits[userPlan];
+    const currentLinks = user.linksCreated ?? 0;
+
+    if (currentLinks < maxLinks) {
+      return await db.transaction(async (tx) => {
+        await tx
+          .update(users)
+          .set({ linksCreated: sql`${users.linksCreated} + 1` })
+          .where(eq(users.id, userId));
+
+        await tx.insert(shortLinkTable).values({
+          userId: userId,
+          title: data.title,
+          url: data.url,
+          shortCode: data.shortCode,
+        });
+
+        return {
+          status: "success",
+          message: "Short Link created successfully",
+        };
+      });
+    } else {
+      return {
+        status: "error",
+        message:
+          "You've reached your plan's link limit. Upgrade to create more!",
+      };
+    }
   } catch (error) {
-    console.error(error);
-    return { status: "error", message: "Failed to create link" };
+    console.error("Failed to create link:", error);
+    return { status: "error", message: "Something went wrong" };
   }
 };
 
@@ -298,28 +352,54 @@ export const qrCodeAction = async (data: shortenerUserData) => {
 
   const shortCode = crypto.randomBytes(4).toString("hex");
 
+  const limits = {
+    free: 5,
+    pro: 30,
+    business: Number.MAX_SAFE_INTEGER,
+  };
+
+  const userPlan = (user.plan?.toLowerCase() || "free") as keyof typeof limits;
+  const maxQrs = limits[userPlan];
+  const currentQrs = user.qrsCreated ?? 0;
+
   try {
-    const [res] = await db.insert(shortLinkTable).values({
-      userId: user.id,
-      title,
-      url: url,
-      shortCode,
-      type: "qr",
-    });
+    if (currentQrs < maxQrs) {
+      return await db.transaction(async (tx) => {
+        await tx
+          .update(users)
+          .set({ qrsCreated: sql`${users.qrsCreated} + 1` })
+          .where(eq(users.id, user.id));
 
-    await db.insert(qrCodeTable).values({
-      userId: user.id,
-      linkId: res.insertId,
-    });
+        const [res] = await tx.insert(shortLinkTable).values({
+          userId: user.id,
+          title,
+          url: url,
+          shortCode,
+          type: "qr",
+        });
 
-    return {
-      status: "success",
-      message: "Qr Code Generated Successfully",
-      data: {
-        shortCode: shortCode,
-        url: url,
-      },
-    };
+        const insertedLinkId = res.insertId;
+
+        await tx.insert(qrCodeTable).values({
+          userId: user.id,
+          linkId: insertedLinkId,
+        });
+
+        return {
+          status: "success",
+          message: "Qr Code Generated Successfully",
+          data: {
+            shortCode: shortCode,
+            url: url,
+          },
+        };
+      });
+    } else {
+      return {
+        status: "error",
+        message: "You've reached your plan's QR limit. Upgrade to create more!",
+      };
+    }
   } catch (error) {
     console.error("Failed to create Qr Code:", error);
     return { status: "error", message: "Something went wrong" };
@@ -383,36 +463,60 @@ export const createQrAction = async ({ data }: { data: CreateQrData }) => {
   if (!user || !user.id) return redirect("/");
 
   const { data: validateData, error } = createQrSchema.safeParse(data);
-  if (error) return { status: "ERROR", message: error.issues[0].message };
+  if (error) return { status: "error", message: error.issues[0].message };
 
   const { title, url, bgColor, fgColor, logoUrl } = validateData;
-  if (!url) return { status: "error", message: "URL is required" };
 
   const shortCode = crypto.randomBytes(4).toString("hex");
 
+  const limits = {
+    free: 5,
+    pro: 30,
+    business: Number.MAX_SAFE_INTEGER,
+  };
+
+  const userPlan = (user.plan?.toLowerCase() || "free") as keyof typeof limits;
+  const maxQrs = limits[userPlan];
+  const currentQrs = user.qrsCreated ?? 0;
+
   try {
-    const [res] = await db.insert(shortLinkTable).values({
-      userId: user.id,
-      title,
-      url: url,
-      shortCode,
-      type: "qr",
-    });
+    if (currentQrs < maxQrs) {
+      return await db.transaction(async (tx) => {
+        await tx
+          .update(users)
+          .set({ qrsCreated: sql`${users.qrsCreated} + 1` })
+          .where(eq(users.id, user.id));
 
-    await db.insert(qrCodeTable).values({
-      userId: user.id,
-      linkId: res.insertId,
-      bgColor,
-      fgColor,
-      logoUrl,
-    });
+        const [linkRes] = await tx.insert(shortLinkTable).values({
+          userId: user.id,
+          title: title || "QR Code Link",
+          url: url,
+          shortCode,
+          type: "qr",
+        });
 
-    return {
-      status: "success",
-      message: "Qr Code Generated Successfully",
-    };
+        await tx.insert(qrCodeTable).values({
+          userId: user.id,
+          linkId: linkRes.insertId,
+          bgColor: bgColor || "#ffffff",
+          fgColor: fgColor || "#000000",
+          logoUrl: logoUrl || null,
+        });
+
+        return {
+          status: "success",
+          message: "QR Code Generated Successfully",
+          data: { shortCode, url },
+        };
+      });
+    } else {
+      return {
+        status: "error",
+        message: "You've reached your plan's QR limit. Upgrade to create more!",
+      };
+    }
   } catch (error) {
-    console.error("Failed to create Qr Code:", error);
+    console.error("Failed to create QR Code:", error);
     return { status: "error", message: "Something went wrong" };
   }
 };

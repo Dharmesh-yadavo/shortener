@@ -18,14 +18,24 @@ import {
   Pipette,
   Image as ImageIcon,
   Link as LinkIcon,
+  Zap,
+  Info,
 } from "lucide-react";
 import { CreateQrData, createQrSchema } from "@/server/users/users.schema";
 import { createQrAction } from "@/server/users/users.action";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const PRESET_COLORS = ["#000000", "#2563eb", "#dc2626", "#16a34a", "#7c3aed"];
 const PRESET_BG = ["#ffffff", "#f8fafc", "#f1f5f9", "#fff7ed", "#f0fdf4"];
 
-export const CreateQrComp = () => {
+export const CreateQrComp = ({
+  plan,
+  qrsCreated,
+}: {
+  plan: "free" | "pro" | "business" | null;
+  qrsCreated: number;
+}) => {
   const router = useRouter();
 
   const {
@@ -78,16 +88,80 @@ export const CreateQrComp = () => {
     }
   };
 
+  // --- LIMIT LOGIC ---
+  const limits = {
+    free: 5,
+    pro: 30,
+    business: Infinity,
+  };
+
+  const currentPlan = (plan?.toLowerCase() || "free") as keyof typeof limits;
+  const maxQrs = limits[currentPlan];
+  const remainingQrs =
+    maxQrs === Infinity ? Infinity : Math.max(0, maxQrs - qrsCreated);
+  const isLimitReached = maxQrs !== Infinity && remainingQrs === 0;
+
   return (
     <div className="max-w-6xl mx-auto py-12 px-6">
       {/* Header */}
-      <div className="flex flex-col mb-10 space-y-2">
-        <h1 className="text-4xl font-black text-slate-900 tracking-tight">
-          Create Dynamic QR
-        </h1>
-        <p className="text-slate-500 font-medium text-lg">
-          Generate a trackable QR code that you can edit anytime.
-        </p>
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+            Create Dynamic QR
+          </h1>
+          <p className="text-slate-500 font-medium text-md">
+            Generate a trackable QR code that you can edit anytime.
+          </p>
+        </div>
+        <div className="px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-xs font-black uppercase tracking-widest border border-indigo-100">
+          {plan || "Free"} Plan
+        </div>
+      </div>
+
+      {/* Usage Notification Bar */}
+      <div
+        className={cn(
+          "mb-8 p-4 max-w-156 rounded-2xl border flex items-center justify-between transition-all",
+          isLimitReached
+            ? "bg-red-50 border-red-100 shadow-sm"
+            : "bg-white border-slate-200",
+        )}
+      >
+        <div className="flex items-center gap-4">
+          <div
+            className={cn(
+              "p-2.5 rounded-xl",
+              isLimitReached
+                ? "bg-red-100 text-red-600"
+                : "bg-indigo-50 text-indigo-600",
+            )}
+          >
+            <Info size={20} />
+          </div>
+          <div>
+            <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight">
+              {maxQrs === Infinity
+                ? "Unlimited QR Generation"
+                : `${remainingQrs} QR Codes Remaining`}
+            </h4>
+            <p className="text-xs text-slate-500 font-medium">
+              {maxQrs === Infinity
+                ? "Your Business subscription includes unlimited dynamic QR codes."
+                : `You've utilized ${qrsCreated} out of your ${maxQrs} monthly allowance.`}
+            </p>
+          </div>
+        </div>
+
+        {isLimitReached && (
+          <Link href="/subscription">
+            <Button
+              size="sm"
+              className="bg-indigo-600 hover:bg-indigo-700 font-bold gap-2 rounded-lg px-6"
+            >
+              <Zap size={14} fill="currentColor" /> Upgrade
+            </Button>
+          </Link>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">

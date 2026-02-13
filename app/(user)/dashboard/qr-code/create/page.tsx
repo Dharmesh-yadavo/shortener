@@ -7,7 +7,7 @@ const CreateQrPage = async () => {
   const user = await getCurrentUser();
   if (!user) redirect("/");
 
-  return <CreateQrComp />;
+  return <CreateQrComp plan={user.plan} qrsCreated={user.qrsCreated} />;
 };
 
 export default CreateQrPage;

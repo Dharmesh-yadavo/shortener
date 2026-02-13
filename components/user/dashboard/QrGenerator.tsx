@@ -1,5 +1,5 @@
 "use client";
-import { QrCode, Download, Share2 } from "lucide-react";
+import { QrCode, Download, Share2, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
@@ -13,8 +13,16 @@ import { toast } from "sonner";
 import { qrCodeAction } from "@/server/users/users.action";
 import { useState } from "react";
 import { QrDialogComp } from "./QrDialogComp";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
-export const QrGenerator = () => {
+export const QrGenerator = ({
+  qrsCreated = 0,
+  plan,
+}: {
+  qrsCreated: number;
+  plan: string;
+}) => {
   const [generatedLink, setGeneratedLink] = useState<string>("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -31,7 +39,7 @@ export const QrGenerator = () => {
     console.log(data);
     const result = await qrCodeAction(data);
 
-    if (result.status === "success") {
+    if (result.status === "success" && "data" in result) {
       toast.success(result.message);
       const fullUrl = `${window.location.origin}/${result.data?.shortCode}`;
       setGeneratedLink(fullUrl);
@@ -41,6 +49,16 @@ export const QrGenerator = () => {
       toast.error(result.message);
     }
   };
+
+  let MAX_LINKS: number | "unlimited" = 0;
+  if (plan === "free") MAX_LINKS = 5;
+  else if (plan === "pro") MAX_LINKS = 30;
+  else if (plan === "business") MAX_LINKS = "unlimited";
+
+  const remainingLinks =
+    MAX_LINKS === "unlimited" ? null : Math.max(0, MAX_LINKS - qrsCreated);
+
+  const isLimitReached = MAX_LINKS !== "unlimited" && remainingLinks === 0;
 
   return (
     <motion.div
@@ -92,14 +110,55 @@ export const QrGenerator = () => {
 
         {/* Footer for QR */}
         <div className="flex items-center justify-between pt-8 border-t border-slate-50">
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <div className="w-4 h-4 rounded bg-purple-50 text-purple-600 flex items-center justify-center text-[10px] font-bold">
-              i
-            </div>
-            <span>
-              QR codes this month:{" "}
-              <strong className="text-slate-900">0/5</strong>
-            </span>
+          <div className="flex items-center gap-3">
+            {isLimitReached ? (
+              /* LIMIT REACHED STATE */
+              <motion.div
+                initial={{ scale: 0.95 }}
+                animate={{ scale: 1 }}
+                className="flex items-center gap-2"
+              >
+                <div className="px-2 py-1 rounded bg-red-50 text-red-600 text-[10px] font-bold uppercase tracking-wider">
+                  Limit Reached
+                </div>
+                <Link href="/subscription">
+                  <button className="text-xs font-sans cursor-pointer font-bold text-blue-600 hover:underline flex items-center gap-1">
+                    Upgrade to create more <Zap size={12} fill="currentColor" />
+                  </button>
+                </Link>
+              </motion.div>
+            ) : (
+              /* ACTIVE USAGE STATE */
+              <div className="flex items-center gap-2 text-xs font-sans text-slate-500">
+                <div
+                  className={cn(
+                    "w-4 h-4 rounded flex items-center justify-center text-[10px] font-bold",
+                    MAX_LINKS === "unlimited"
+                      ? "bg-emerald-50 text-emerald-600"
+                      : "bg-purple-50 text-purple-600",
+                  )}
+                >
+                  {MAX_LINKS === "unlimited" ? "∞" : "i"}
+                </div>
+                <span>
+                  {MAX_LINKS === "unlimited" ? (
+                    <>
+                      You have{" "}
+                      <strong className="text-slate-900">Unlimited</strong> QR
+                      code this month. Enjoy!
+                    </>
+                  ) : (
+                    <>
+                      You can create{" "}
+                      <strong className="text-slate-900">
+                        {remainingLinks}
+                      </strong>{" "}
+                      more QR Code this month.
+                    </>
+                  )}
+                </span>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-3">
             <button className="text-[10px] font-bold text-slate-400 hover:text-blue-600 flex items-center gap-1 uppercase tracking-widest transition-colors">

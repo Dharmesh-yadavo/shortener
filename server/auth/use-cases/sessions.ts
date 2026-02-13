@@ -74,6 +74,9 @@ export const validateSessionAndGetUser = async (session: string) => {
       },
       name: users.name,
       email: users.email,
+      plan: users.plan,
+      linksCreated: users.linksCreated,
+      qrsCreated: users.qrsCreated,
       createdAt: users.createdAt,
       updatedAt: users.updatedAt,
     })

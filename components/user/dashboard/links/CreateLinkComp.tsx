@@ -16,8 +16,19 @@ import { toast } from "sonner";
 import { redirect, useRouter } from "next/navigation";
 import { CreateLinkData, createLinkSchema } from "@/server/users/users.schema";
 import { createLinkAction } from "@/server/users/users.action";
+import { Info, Zap } from "lucide-react";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
-export const CreateLinkComp = ({ userId }: { userId: number }) => {
+export const CreateLinkComp = ({
+  userId,
+  plan,
+  linksCreated,
+}: {
+  userId: number;
+  plan: "free" | "pro" | "business" | null;
+  linksCreated: number;
+}) => {
   const router = useRouter();
 
   // Initialize form without the Shadcn Form wrapper
@@ -46,11 +57,77 @@ export const CreateLinkComp = ({ userId }: { userId: number }) => {
     }
   };
 
+  // --- LIMIT LOGIC ---
+  const limits = {
+    free: 5,
+    pro: 30,
+    business: Infinity,
+  };
+
+  const currentPlan = (plan?.toLowerCase() || "free") as keyof typeof limits;
+  const maxLinks = limits[currentPlan];
+  const remainingLinks =
+    maxLinks === Infinity ? Infinity : Math.max(0, maxLinks - linksCreated);
+  const isLimitReached = maxLinks !== Infinity && remainingLinks === 0;
+
   return (
     <div className="max-w-3xl mx-auto py-12 px-4 space-y-8">
-      <h1 className="text-3xl font-black text-slate-900 tracking-tight">
-        Create a new link
-      </h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+          Create a new link
+        </h1>
+
+        {/* Plan Badge */}
+        <div className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold uppercase tracking-wider border border-blue-100">
+          {plan} Plan
+        </div>
+      </div>
+
+      {/* --- LIMIT NOTIFICATION BAR --- */}
+      <div
+        className={cn(
+          "p-4 rounded-xl border flex items-center justify-between shadow-sm",
+          isLimitReached
+            ? "bg-red-50 border-red-100"
+            : "bg-white border-slate-200",
+        )}
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className={cn(
+              "p-2 rounded-lg",
+              isLimitReached
+                ? "bg-red-100 text-red-600"
+                : "bg-blue-50 text-blue-600",
+            )}
+          >
+            <Info size={18} />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-slate-900">
+              {maxLinks === Infinity
+                ? "Unlimited links enabled"
+                : `${remainingLinks} links remaining`}
+            </p>
+            <p className="text-xs text-slate-500 font-medium">
+              {maxLinks === Infinity
+                ? "Your Business plan allows for infinite short links."
+                : `You've used ${linksCreated} out of your ${maxLinks} link limit.`}
+            </p>
+          </div>
+        </div>
+
+        {isLimitReached && (
+          <Link href="/subscription">
+            <Button
+              size="sm"
+              className="bg-blue-600 hover:bg-blue-700 font-bold gap-2"
+            >
+              <Zap size={14} fill="currentColor" /> Upgrade Now
+            </Button>
+          </Link>
+        )}
+      </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <Card className="border-slate-200 shadow-sm overflow-hidden">

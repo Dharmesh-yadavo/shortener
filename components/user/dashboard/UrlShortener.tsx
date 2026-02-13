@@ -14,8 +14,16 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { UrlDialogComp } from "./UrlDialogComp";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
-export const UrlShortener = () => {
+export const UrlShortener = ({
+  linksCreated = 0,
+  plan,
+}: {
+  linksCreated: number;
+  plan: string;
+}) => {
   const {
     register,
     handleSubmit,
@@ -32,7 +40,7 @@ export const UrlShortener = () => {
     console.log(data);
     const result = await shortLinkAction(data);
 
-    if (result.status === "success") {
+    if (result.status === "success" && "data" in result) {
       toast.success(result.message);
       const fullUrl = `${window.location.origin}/${result.data?.shortCode}`;
       setGeneratedLink(fullUrl);
@@ -42,6 +50,16 @@ export const UrlShortener = () => {
       toast.error(result.message);
     }
   };
+
+  let MAX_LINKS: number | "unlimited" = 0;
+  if (plan === "free") MAX_LINKS = 5;
+  else if (plan === "pro") MAX_LINKS = 30;
+  else if (plan === "business") MAX_LINKS = "unlimited";
+
+  const remainingLinks =
+    MAX_LINKS === "unlimited" ? null : Math.max(0, MAX_LINKS - linksCreated);
+
+  const isLimitReached = MAX_LINKS !== "unlimited" && remainingLinks === 0;
 
   return (
     <motion.div
@@ -64,7 +82,7 @@ export const UrlShortener = () => {
                 />
               </div>
               <Input
-                type="text" // Change from "url" to "text" if you want Zod to handle the error message instead of the browser
+                type="text"
                 {...register("url")}
                 className={`w-full h-12 pl-11 rounded-md border-slate-200 ${
                   errors.url
@@ -97,23 +115,63 @@ export const UrlShortener = () => {
       />
 
       {/* Footer for Links */}
-      <div className="flex items-center justify-between mt-8 border-t border-slate-50">
-        <div className="flex items-center gap-2 text-xs text-slate-500">
-          <div className="w-4 h-4 rounded bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] font-bold">
-            i
-          </div>
-          <span>
-            You can create <strong className="text-slate-900">10 more</strong>{" "}
-            links this month.
-          </span>
+      <div className="flex items-center justify-between mt-6 ">
+        <div className="flex items-center gap-3">
+          {isLimitReached ? (
+            /* LIMIT REACHED STATE */
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              className="flex items-center gap-2"
+            >
+              <div className="px-2 py-1 rounded bg-red-50 text-red-600 text-[10px] font-bold uppercase tracking-wider">
+                Limit Reached
+              </div>
+              <Link href="/subscription">
+                <button className="text-xs font-sans cursor-pointer font-bold text-blue-600 hover:underline flex items-center gap-1">
+                  Upgrade to create more <Zap size={12} fill="currentColor" />
+                </button>
+              </Link>
+            </motion.div>
+          ) : (
+            /* ACTIVE USAGE STATE */
+            <div className="flex items-center gap-2 text-xs font-sans text-slate-500">
+              <div
+                className={cn(
+                  "w-4 h-4 rounded flex items-center justify-center text-[10px] font-bold",
+                  MAX_LINKS === "unlimited"
+                    ? "bg-emerald-50 text-emerald-600"
+                    : "bg-purple-50 text-purple-600",
+                )}
+              >
+                {MAX_LINKS === "unlimited" ? "∞" : "i"}
+              </div>
+              <span>
+                {MAX_LINKS === "unlimited" ? (
+                  <>
+                    You have{" "}
+                    <strong className="text-slate-900">Unlimited</strong> links
+                    this month. Enjoy!
+                  </>
+                ) : (
+                  <>
+                    You can create{" "}
+                    <strong className="text-slate-900">{remainingLinks}</strong>{" "}
+                    more short links this month.
+                  </>
+                )}
+              </span>
+            </div>
+          )}
         </div>
+
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1 text-[10px] font-bold text-amber-500 uppercase tracking-widest">
+          <div className="flex items-center gap-1 text-[10px] font-bold text-amber-500 uppercase tracking-widest opacity-80">
             <Zap size={12} fill="currentColor" /> <span>Instant</span>
           </div>
-          <div className="flex items-center gap-1 text-[10px] font-bold text-blue-500 uppercase tracking-widest">
+          <button className="flex items-center gap-1 text-[10px] font-bold text-blue-500 uppercase tracking-widest hover:opacity-70 transition-opacity">
             <History size={12} /> <span>History</span>
-          </div>
+          </button>
         </div>
       </div>
     </motion.div>
