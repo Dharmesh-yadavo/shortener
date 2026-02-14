@@ -40,7 +40,7 @@ export const shortLinkAction = async (data: shortenerUserData) => {
 
   const userPlan = (user.plan?.toLowerCase() || "free") as keyof typeof limits;
   const maxLinks = limits[userPlan];
-  const currentLinks = user.qrsCreated ?? 0;
+  const currentLinks = user.linksCreated ?? 0;
 
   try {
     if (currentLinks < maxLinks) {

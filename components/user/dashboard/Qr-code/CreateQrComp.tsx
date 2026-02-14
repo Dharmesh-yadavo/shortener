@@ -102,7 +102,7 @@ export const CreateQrComp = ({
   const isLimitReached = maxQrs !== Infinity && remainingQrs === 0;
 
   return (
-    <div className="max-w-6xl mx-auto py-12 px-6">
+    <div className="max-w-6xl mx-auto font-sans py-12 px-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div className="space-y-2">

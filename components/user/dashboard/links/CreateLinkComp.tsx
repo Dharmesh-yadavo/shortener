@@ -71,7 +71,7 @@ export const CreateLinkComp = ({
   const isLimitReached = maxLinks !== Infinity && remainingLinks === 0;
 
   return (
-    <div className="max-w-3xl mx-auto py-12 px-4 space-y-8">
+    <div className="max-w-3xl mx-auto font-sans py-12 px-4 space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-black text-slate-900 tracking-tight">
           Create a new link
