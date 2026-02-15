@@ -13,6 +13,8 @@ import {
   and,
   isNull,
   gte,
+  gt,
+  max,
 } from "drizzle-orm";
 
 export async function getUserAnalytics(userId: number) {
@@ -145,6 +147,21 @@ export const linkAnalyticsAction = async (shortCode: string) => {
     )
     .groupBy(dateExpr)
     .orderBy(asc(dateExpr));
+
+  return res;
+};
+
+//! Top performing link
+export const topLinkAction = async (userId: number) => {
+  const [res] = await db
+    .select({
+      shortCode: shortLinkTable.shortCode,
+      clicks: shortLinkTable.clicks,
+    })
+    .from(shortLinkTable)
+    .where(eq(shortLinkTable.userId, userId))
+    .orderBy(desc(shortLinkTable.clicks))
+    .limit(1);
 
   return res;
 };

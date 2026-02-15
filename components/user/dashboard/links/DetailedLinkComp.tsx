@@ -3,10 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { shortLinkTable } from "@/drizzle/schema";
-import { InferSelectModel } from "drizzle-orm";
 import {
-  BarChart3,
   Pencil,
   QrCode,
   Lock,
@@ -18,7 +15,6 @@ import {
   Copy,
   Check,
   ArrowUpRight,
-  ArrowRight,
   Sparkles,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";

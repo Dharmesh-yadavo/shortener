@@ -18,7 +18,18 @@ type UserData = {
   updatedAt: Date;
 };
 
-const Dashboard = ({ serverUser }: { serverUser: UserData }) => {
+type TopLinkData = {
+  shortCode: string;
+  clicks: number;
+};
+
+const Dashboard = ({
+  serverUser,
+  topLinkData,
+}: {
+  serverUser: UserData;
+  topLinkData: TopLinkData;
+}) => {
   const [mode, setMode] = useState("URL");
 
   return (
@@ -91,7 +102,10 @@ const Dashboard = ({ serverUser }: { serverUser: UserData }) => {
       )}
 
       {/* stats of dashboard page */}
-      <DashboardStats topLink="https://example.com/my-long-url" clicks={20} />
+      <DashboardStats
+        shortCode={topLinkData.shortCode}
+        clicks={topLinkData.clicks}
+      />
     </div>
   );
 };

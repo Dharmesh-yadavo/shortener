@@ -1,17 +1,17 @@
 "use client";
-import { Trophy, TrendingUp } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
 export const DashboardStats = ({
-  topLink,
+  shortCode,
   clicks,
 }: {
-  topLink: string;
+  shortCode: string;
   clicks: number;
 }) => {
   return (
-    <div className="grid grid-cols-1 gap-6 mt-8">
+    <div className="grid grid-cols-1 gap-6 mt-8 font-sans">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -26,10 +26,16 @@ export const DashboardStats = ({
           </p>
           <div className="flex flex-row items-center justify-end w-full gap-4">
             <Link
-              href={topLink ? topLink : "https://example.com/my-long-url"}
+              href={
+                shortCode
+                  ? `${process.env.NEXT_PUBLIC_SITE_URL}/${shortCode}`
+                  : "https://example.com/my-long-url"
+              }
               className="font-bold text-slate-900 truncate flex-1 hover:underline"
             >
-              {topLink ? topLink : "https://example.com/my-long-url"}
+              {shortCode
+                ? `${process.env.NEXT_PUBLIC_SITE_URL}/${shortCode}`
+                : "https://example.com/my-long-url"}
             </Link>
             <span className="text-orange-400 font-bold text-sm whitespace-nowrap shrink-0">
               {clicks ? clicks.toLocaleString() : 0} Clicks
