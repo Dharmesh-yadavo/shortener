@@ -11,7 +11,7 @@ type UserData = {
   id: number;
   name: string;
   email: string;
-  plan: string;
+  plan: "pro" | "business" | "free" | null;
   linksCreated: number;
   qrsCreated: number;
   createdAt: Date;
@@ -78,14 +78,14 @@ const Dashboard = ({ serverUser }: { serverUser: UserData }) => {
         <>
           <UrlShortener
             linksCreated={serverUser.linksCreated}
-            plan={serverUser.plan}
+            plan={serverUser?.plan}
             key="url"
           />
         </>
       ) : (
         <QrGenerator
           qrsCreated={serverUser.qrsCreated}
-          plan={serverUser.plan}
+          plan={serverUser?.plan}
           key="qr"
         />
       )}

@@ -92,7 +92,7 @@ export const logoutUserAction = async () => {
   const session = cookieStore.get("session")?.value;
 
   if (!session) return redirect("/login");
-  console.log(session);
+  // console.log(session);
 
   const hashedToken = crypto
     .createHash("sha-256")

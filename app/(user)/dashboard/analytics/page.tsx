@@ -16,9 +16,9 @@ export default async function AnalyticsPage() {
   if (!user) return redirect("/");
 
   const data = await getUserAnalytics(user.id);
-  console.log(data);
+  // console.log(data);
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <main className="p-8 space-y-8 bg-slate-50 min-h-screen ">

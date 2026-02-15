@@ -21,7 +21,7 @@ export const QrGenerator = ({
   plan,
 }: {
   qrsCreated: number;
-  plan: string;
+  plan: "pro" | "business" | "free" | null;
 }) => {
   const [generatedLink, setGeneratedLink] = useState<string>("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -36,7 +36,7 @@ export const QrGenerator = ({
   });
 
   const onSubmit = async (data: shortenerUserData) => {
-    console.log(data);
+    // console.log(data);
     const result = await qrCodeAction(data);
 
     if (result.status === "success" && "data" in result) {

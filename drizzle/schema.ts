@@ -19,6 +19,7 @@ export const users = mysqlTable("users", {
   stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
   stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
   plan: mysqlEnum("plan", ["free", "pro", "business"]).default("free"),
+  planExpiresAt: timestamp("plan_expires_at", { mode: "date" }),
   linksCreated: int("links_created").default(0).notNull(),
   qrsCreated: int("qrs_created").default(0).notNull(),
   deletedAt: timestamp("deleted_at"),

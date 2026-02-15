@@ -26,7 +26,7 @@ export const shortLinkAction = async (data: shortenerUserData) => {
   const { url } = data;
   if (!url) return { error: "URL is required" };
 
-  console.log(user);
+  // console.log(user);
 
   const shortCode = crypto.randomBytes(4).toString("hex");
 

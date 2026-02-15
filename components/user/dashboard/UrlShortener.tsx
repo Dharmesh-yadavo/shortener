@@ -22,7 +22,7 @@ export const UrlShortener = ({
   plan,
 }: {
   linksCreated: number;
-  plan: string;
+  plan: "pro" | "business" | "free" | null;
 }) => {
   const {
     register,

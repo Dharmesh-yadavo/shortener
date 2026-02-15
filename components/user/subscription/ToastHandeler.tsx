@@ -11,9 +11,9 @@ export function ToastHandler() {
   useEffect(() => {
     const paymentStatus = searchParams.get("payment");
 
-    console.log(searchParams);
+    // console.log(searchParams);
 
-    console.log("paymentStatus", paymentStatus);
+    // console.log("paymentStatus", paymentStatus);
 
     if (paymentStatus === "success") {
       toast.success("Payment successful! Your plan has been upgraded.");

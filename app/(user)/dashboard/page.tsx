@@ -4,7 +4,7 @@ import React from "react";
 
 const DashboardPage = async () => {
   const user = await getCurrentUser();
-  console.log(user);
+  // console.log(user);
 
   // You can also redirect here if no user exists
   if (!user) return null;
