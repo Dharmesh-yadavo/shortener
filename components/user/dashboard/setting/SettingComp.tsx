@@ -5,12 +5,17 @@ import { User, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { ProfileSettingComp } from "./ProfileSettingComp";
 import { SecuritySettingComp } from "./SecuritySettingComp";
+import { ManageSubscriptionComp } from "./ManageSubscriptionComp";
 
 type UserData = {
   id: number;
   name: string;
   email: string;
-  image: string | null;
+  linksCreated: number;
+  stripeCustomerId: string | null;
+  plan: "free" | "pro" | "business" | null;
+  planExpiresAt: Date | null;
+  qrsCreated: number;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -44,12 +49,21 @@ export const SettingsComp = ({ user }: { user: UserData }) => {
           >
             <ShieldCheck size={16} /> Security
           </TabsTrigger>
+          <TabsTrigger
+            value="subscription"
+            className="flex gap-2 px-6 rounded-lg data-[state=active]:shadow-sm"
+            onClick={() => setMode("subscription")}
+          >
+            <ShieldCheck size={16} /> Manage Subscription
+          </TabsTrigger>
         </TabsList>
 
         {mode === "profile" ? (
           <ProfileSettingComp user={user} />
-        ) : (
+        ) : mode === "security" ? (
           <SecuritySettingComp userId={user.id} />
+        ) : (
+          <ManageSubscriptionComp user={user} />
         )}
       </Tabs>
     </div>

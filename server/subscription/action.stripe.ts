@@ -23,3 +23,18 @@ export async function createCheckoutSession(
 
   redirect(session.url!);
 }
+
+export async function createCustomerPortalSession(customerId: string) {
+  const origin = (await headers()).get("origin");
+
+  if (!customerId) {
+    throw new Error("User does not have a Stripe Customer ID");
+  }
+
+  const session = await stripe.billingPortal.sessions.create({
+    customer: customerId,
+    return_url: `${origin}/dashboard/settings`, // Where they go after closing the portal
+  });
+
+  redirect(session.url);
+}

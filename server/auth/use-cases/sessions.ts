@@ -76,6 +76,8 @@ export const validateSessionAndGetUser = async (session: string) => {
       email: users.email,
       plan: users.plan,
       linksCreated: users.linksCreated,
+      stripeCustomerId: users.stripeCustomerId,
+      planExpiresAt: users.planExpiresAt,
       qrsCreated: users.qrsCreated,
       createdAt: users.createdAt,
       updatedAt: users.updatedAt,
