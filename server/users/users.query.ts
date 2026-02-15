@@ -88,8 +88,8 @@ export const getQrByShortCode = async (shortCode: string) => {
       logoUrl: qrCodeTable.logoUrl,
     })
     .from(shortLinkTable)
-    .where(eq(shortLinkTable.shortCode, shortCode))
-    .innerJoin(qrCodeTable, eq(shortLinkTable.id, qrCodeTable.linkId));
+    .innerJoin(qrCodeTable, eq(shortLinkTable.id, qrCodeTable.linkId))
+    .where(eq(shortLinkTable.shortCode, shortCode));
 
   return res;
 };

@@ -12,6 +12,7 @@ import {
   countDistinct,
   and,
   isNull,
+  gte,
 } from "drizzle-orm";
 
 export async function getUserAnalytics(userId: number) {
@@ -93,3 +94,57 @@ export async function getUserAnalytics(userId: number) {
 
   return { overview, activity, devices, countries, referrers };
 }
+
+export const qrAnalyticsAction = async (shortCode: string) => {
+  const dateExpr = sql`DATE_FORMAT(${clickLogs.clickedAt}, '%Y-%m-%d')`;
+
+  const twentyDaysAgo = new Date();
+  twentyDaysAgo.setDate(twentyDaysAgo.getDate() - 20);
+
+  const res = await db
+    .select({
+      date: dateExpr,
+      desktop: sql<number>`CAST(SUM(CASE WHEN ${clickLogs.device} = 'desktop' THEN 1 ELSE 0 END) AS UNSIGNED)`,
+      mobile: sql<number>`CAST(SUM(CASE WHEN ${clickLogs.device} = 'mobile' THEN 1 ELSE 0 END) AS UNSIGNED)`,
+      other: sql<number>`CAST(SUM(CASE WHEN ${clickLogs.device} NOT IN ('desktop', 'mobile') OR ${clickLogs.device} IS NULL THEN 1 ELSE 0 END) AS UNSIGNED)`,
+    })
+    .from(clickLogs)
+    .innerJoin(shortLinkTable, eq(clickLogs.linkId, shortLinkTable.id))
+    .where(
+      and(
+        eq(shortLinkTable.shortCode, shortCode),
+        gte(clickLogs.clickedAt, twentyDaysAgo),
+      ),
+    )
+    .groupBy(dateExpr)
+    .orderBy(asc(dateExpr));
+
+  return res;
+};
+
+export const linkAnalyticsAction = async (shortCode: string) => {
+  const dateExpr = sql`DATE_FORMAT(${clickLogs.clickedAt}, '%Y-%m-%d')`;
+
+  const twentyDaysAgo = new Date();
+  twentyDaysAgo.setDate(twentyDaysAgo.getDate() - 20);
+
+  const res = await db
+    .select({
+      date: dateExpr,
+      desktop: sql<number>`CAST(SUM(CASE WHEN ${clickLogs.device} = 'desktop' THEN 1 ELSE 0 END) AS UNSIGNED)`,
+      mobile: sql<number>`CAST(SUM(CASE WHEN ${clickLogs.device} = 'mobile' THEN 1 ELSE 0 END) AS UNSIGNED)`,
+      other: sql<number>`CAST(SUM(CASE WHEN ${clickLogs.device} NOT IN ('desktop', 'mobile') OR ${clickLogs.device} IS NULL THEN 1 ELSE 0 END) AS UNSIGNED)`,
+    })
+    .from(clickLogs)
+    .innerJoin(shortLinkTable, eq(clickLogs.linkId, shortLinkTable.id))
+    .where(
+      and(
+        eq(shortLinkTable.shortCode, shortCode),
+        gte(clickLogs.clickedAt, twentyDaysAgo),
+      ),
+    )
+    .groupBy(dateExpr)
+    .orderBy(asc(dateExpr));
+
+  return res;
+};

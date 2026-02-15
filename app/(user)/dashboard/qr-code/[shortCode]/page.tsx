@@ -1,4 +1,6 @@
 import { DetailedQrComp } from "@/components/user/dashboard/Qr-code/DetailedQrComp";
+import { getCurrentUser } from "@/server/auth/auth.queries";
+import { qrAnalyticsAction } from "@/server/users/users.analytics";
 import { getQrByShortCode } from "@/server/users/users.query";
 import { redirect } from "next/navigation";
 
@@ -15,7 +17,23 @@ const DetailedQRage = async ({
     redirect("/");
   }
 
-  return <DetailedQrComp initialData={qrData} />;
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/");
+  }
+
+  const analyticsData = await qrAnalyticsAction(shortCode);
+
+  console.log(analyticsData);
+
+  return (
+    <DetailedQrComp
+      initialData={qrData}
+      activityData={analyticsData}
+      userPlan={user.plan}
+    />
+  );
 };
 
 export default DetailedQRage;

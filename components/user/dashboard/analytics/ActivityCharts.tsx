@@ -1,4 +1,3 @@
-// components/analytics/Charts.tsx
 "use client";
 
 import * as React from "react";
@@ -57,7 +56,7 @@ export function ActivityChart({ data }: { data: ActivityDataType[] }) {
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.slice(5)} // Show MM-DD
+              tickFormatter={(value) => value.slice(5)}
             />
             <ChartTooltip content={<ChartTooltipContent />} />
             <Area

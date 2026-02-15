@@ -101,7 +101,14 @@ export default function QrGallery({ qrs }: QrGalleryProps) {
       {/* QR Card */}
       <div className="flex flex-col gap-4 max-w-5xl mx-auto p-6">
         {filteredQr.length > 0 ? (
-          filteredQr.map((qr) => <QrCard key={qr.shortCode} {...qr} />)
+          filteredQr.map((qr) => (
+            <Link
+              href={`/dashboard/qr-code/${qr.shortCode}`}
+              key={qr.shortCode}
+            >
+              <QrCard {...qr} />
+            </Link>
+          ))
         ) : (
           <div className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
             <p className="text-slate-400 font-medium">

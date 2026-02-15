@@ -7,32 +7,42 @@ import {
   Pencil,
   Download,
   ExternalLink,
-  Calendar,
-  BarChart3,
-  Lock,
+  Sparkles,
 } from "lucide-react";
 import QRCode from "react-qr-code";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { BarChartTimeline } from "@/components/common/BarChartTimeline";
+// import { ScanActivityChart } from "./ScanActivityChart";
 
 interface QrDetailsPageProps {
-  initialData: {
-    title: string | null;
-    url: string;
-    shortCode: string;
-    isActive: boolean;
-    createdAt: Date;
-    type: string;
-    clicks: number;
-    fgColor: string;
-    bgColor: string;
-    logoUrl: string | null;
-  };
+  title: string | null;
+  url: string;
+  shortCode: string;
+  isActive: boolean;
+  createdAt: Date;
+  type: string;
+  clicks: number;
+  fgColor: string | null;
+  bgColor: string | null;
+  logoUrl: string | null;
 }
 
-export const DetailedQrComp = ({ initialData }: QrDetailsPageProps) => {
+interface AnalyticsData {
+  date: unknown;
+  desktop: number;
+  mobile: number;
+  other: number;
+}
+export const DetailedQrComp = ({
+  initialData,
+  activityData,
+  userPlan,
+}: {
+  initialData: QrDetailsPageProps;
+  activityData: AnalyticsData[];
+  userPlan: string | null;
+}) => {
   const qrRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
   const fullShortUrl = mounted
@@ -144,7 +154,9 @@ export const DetailedQrComp = ({ initialData }: QrDetailsPageProps) => {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div
                     className="rounded-lg shadow-md overflow-hidden w-6 h-6 flex items-center justify-center"
-                    style={{ backgroundColor: initialData.bgColor }}
+                    style={{
+                      backgroundColor: initialData.bgColor || "#ffffff",
+                    }}
                   >
                     <img
                       src={initialData.logoUrl}
@@ -181,55 +193,32 @@ export const DetailedQrComp = ({ initialData }: QrDetailsPageProps) => {
 
       {/* ANALYTICS SECTION */}
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-          Scan data
-          <Badge
-            variant="outline"
-            className="bg-slate-50 text-slate-500 font-medium"
-          >
-            <BarChart3 size={12} className="mr-1" /> {initialData.clicks} total
-            scans
-          </Badge>
-        </h2>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            Scan data
+          </h2>
+        </div>
 
-        <Card className="p-8 relative overflow-hidden bg-white border-slate-200">
-          <div className="flex justify-between items-center mb-12">
-            <h3 className="font-bold text-slate-800">Scans over time</h3>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-slate-400 bg-slate-50 border-slate-200 cursor-not-allowed"
-            >
-              <Calendar size={14} className="mr-2" /> Time Period
-            </Button>
+        {/* PRO PREVIEW BANNER (Matches your image_b82cde.png) */}
+        {userPlan == "free" && (
+          <div className="bg-[#f0f9ff] border-l-4 border-[#0ea5e9] p-4 rounded-r-lg flex items-center gap-3 transition-all animate-in fade-in slide-in-from-top-2">
+            <Sparkles className="size-4 text-[#0ea5e9] shrink-0" />
+            <p className="text-[#0369a1] text-sm">
+              This is a <span className="font-bold">free preview</span> of
+              analytics using <span className="font-bold">sample data</span>.{" "}
+              <Link
+                href="/dashboard/billing"
+                className="underline font-bold hover:text-[#0c4a6e]"
+              >
+                Upgrade
+              </Link>{" "}
+              to see your data in real-time and uncover themes.
+            </p>
           </div>
+        )}
 
-          {/* MOCK CHART BARS */}
-          <div className="h-48 flex items-end gap-2 md:gap-4 relative">
-            {/* Simple visual representation of bars like your image */}
-            {[40, 70, 45, 90, 65, 80, 30, 100, 50, 60, 85, 40, 20, 95, 30].map(
-              (height, i) => (
-                <div
-                  key={i}
-                  className="flex-1 bg-cyan-400 rounded-t-sm transition-all hover:bg-cyan-500 cursor-pointer"
-                  style={{ height: `${height}%` }}
-                />
-              ),
-            )}
-
-            {/* UPGRADE OVERLAY (Matching your image) */}
-            <div className="absolute inset-0 bg-white/40 backdrop-blur-[1px] flex items-center justify-center">
-              <Button className="bg-slate-800 hover:bg-slate-900 text-white rounded-full px-6 shadow-xl">
-                <Lock size={14} className="mr-2" /> Upgrade
-              </Button>
-            </div>
-          </div>
-
-          <div className="mt-4 border-t border-slate-100 pt-4 flex justify-between text-[10px] font-bold text-slate-300 uppercase tracking-widest">
-            <span>Jan 15</span>
-            <span>Feb 04</span>
-          </div>
-        </Card>
+        {/* THE UPDATED REAL-TIME CHART */}
+        <BarChartTimeline data={activityData} isPro={userPlan} />
       </div>
     </div>
   );

@@ -18,6 +18,8 @@ import {
   Copy,
   Check,
   ArrowUpRight,
+  ArrowRight,
+  Sparkles,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
@@ -28,14 +30,40 @@ import { toast } from "sonner";
 import { PasswordModal } from "./PasswordModal";
 import { ShareDialog } from "./ShareDialog";
 import { title } from "process";
-
-export type Shortlink = InferSelectModel<typeof shortLinkTable>;
+import { BarChartTimeline } from "@/components/common/BarChartTimeline";
 
 interface DetailedLinksProps {
-  links: Shortlink;
+  id: number;
+  userId: number;
+  title: string | null;
+  url: string;
+  shortCode: string;
+  type: string;
+  clicks: number;
+  isActive: boolean;
+  isHidden: boolean;
+  password: string | null;
+  deletedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export const DetailedlinkComp = ({ links }: DetailedLinksProps) => {
+interface AnalyticsData {
+  date: unknown;
+  desktop: number;
+  mobile: number;
+  other: number;
+}
+
+export const DetailedlinkComp = ({
+  links,
+  activityData,
+  userPlan,
+}: {
+  links: DetailedLinksProps;
+  activityData: AnalyticsData[];
+  userPlan: string | null;
+}) => {
   const [mounted, setMounted] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -307,27 +335,38 @@ export const DetailedlinkComp = ({ links }: DetailedLinksProps) => {
               Link engagement trends
             </p>
           </div>
-          <div className="flex bg-slate-50 p-0.5 rounded-lg border border-slate-100">
-            <Button
-              variant="ghost"
-              className="text-[9px] font-black h-7 px-3 rounded-md bg-white shadow-sm text-slate-900 uppercase"
-            >
-              7D
-            </Button>
-            <Button
-              variant="ghost"
-              className="text-[9px] font-black h-7 px-3 rounded-md text-slate-400 uppercase hover:text-slate-600"
-            >
-              30D
-            </Button>
+        </div>
+        {userPlan === "free" && (
+          <div className="relative overflow-hidden rounded-xl border border-blue-100 bg-linear-to-r from-blue-50 to-indigo-50 p-6 shadow-sm transition-all duration-300 hover:shadow-md">
+            <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-blue-100/50 blur-2xl" />
+
+            <div className="flex flex-col sm:flex-row items-center gap-4 relative z-10">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-blue-100">
+                <Sparkles className="h-6 w-6 text-blue-600 animate-pulse" />
+              </div>
+
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="text-sm font-bold text-blue-900 uppercase tracking-tight">
+                  Unlock Pro Insights
+                </h3>
+                <p className="mt-1 text-sm text-blue-700/80 leading-relaxed">
+                  You&apos;re viewing{" "}
+                  <span className="font-semibold">sample data</span>. Upgrade to
+                  see real-time device distribution, location tracking, and
+                  visitor trends.
+                </p>
+              </div>
+
+              <Link
+                href="/subscription"
+                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-blue-700 hover:shadow-lg active:scale-95 shrink-0"
+              >
+                Upgrade Now
+              </Link>
+            </div>
           </div>
-        </div>
-        <div className="h-48 bg-slate-50/50 rounded-xl flex flex-col items-center justify-center border border-dashed border-slate-200">
-          <BarChart3 className="text-slate-200 mb-2" size={24} />
-          <span className="text-slate-400 font-bold text-[9px] uppercase tracking-[0.2em]">
-            Gathering data...
-          </span>
-        </div>
+        )}
+        <BarChartTimeline data={activityData} isPro={userPlan} />
       </Card>
     </div>
   );
