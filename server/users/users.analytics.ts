@@ -19,7 +19,10 @@ export async function getUserAnalytics(userId: number) {
   // Shared SQL fragments to ensure SELECT and GROUP BY match exactly
   const dateExpr = sql`DATE_FORMAT(${clickLogs.clickedAt}, '%Y-%m-%d')`;
 
-  // 1. Click Activity (Last 7 Days)
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  // 1. Click Activity (Last 30 Days)
   const activity = await db
     .select({
       date: dateExpr,
@@ -27,7 +30,12 @@ export async function getUserAnalytics(userId: number) {
     })
     .from(clickLogs)
     .innerJoin(shortLinkTable, eq(clickLogs.linkId, shortLinkTable.id))
-    .where(eq(shortLinkTable.userId, userId))
+    .where(
+      and(
+        eq(shortLinkTable.userId, userId),
+        gte(clickLogs.clickedAt, thirtyDaysAgo),
+      ),
+    )
     .groupBy(dateExpr) // Must use the expression, not the alias "date"
     .orderBy(asc(dateExpr));
 

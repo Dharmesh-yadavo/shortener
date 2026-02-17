@@ -41,7 +41,7 @@ const SignupPage: React.FC = () => {
 
   const inputStyles = (hasError: boolean) => `
     h-11 px-4 bg-slate-50 border-slate-200 rounded-lg transition-all duration-200
-    focus-visible:ring-2 focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-offset-0
+    focus-visible:ring-2 focus-visible:ring-pink-400/20 focus-visible:border-pink-400 focus-visible:outline-none focus-visible:ring-offset-0
     ${hasError ? "border-red-500 bg-red-50/50 focus-visible:ring-red-500/10 focus-visible:border-red-500" : ""}
   `;
 
@@ -51,13 +51,13 @@ const SignupPage: React.FC = () => {
 
   return (
     <main className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
-      <GlassBackground opacity={0.4} />
+      <GlassBackground opacity={0.6} />
 
       <Card className="w-full max-w-110 border-white/40 bg-white/70 backdrop-blur-xl shadow-2xl rounded-[32px] overflow-hidden">
         <CardContent className="pt-8 pb-8 px-8 md:px-10 text-center">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 leading-tight">
             Create your <br />
-            <span className="text-emerald-400 italic font-medium">account</span>
+            <span className="text-pink-400 italic font-medium">account</span>
           </h1>
           <p className="mt-2 text-slate-600 text-xs">
             Join 10,000+ creators and start shortening.
@@ -116,7 +116,7 @@ const SignupPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-7 text-stone-500 hover:text-emerald-400"
+                className="absolute right-4 top-8 text-stone-700 hover:text-stone-800"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -124,7 +124,7 @@ const SignupPage: React.FC = () => {
 
             <Button
               type="submit"
-              className="w-full h-11 mt-2  bg-emerald-400 hover:bg-emerald-500 text-slate-900 font-bold rounded-xl shadow-md shadow-emerald-200 transition-all"
+              className="w-full h-11 mt-2  bg-pink-300 hover:bg-pink-400/80 text-slate-900 font-bold rounded-xl shadow-md shadow-pink-200 transition-all"
             >
               Create Account
             </Button>
@@ -140,7 +140,7 @@ const SignupPage: React.FC = () => {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-11 bg-white/50 border-slate-100 rounded-xl text-white shadow-md hover:border-emerald-200 hover:bg-emerald-400/10 focus:ring-emerald-400/10 text-sm"
+              className="w-full h-11 bg-white/50 border-slate-100 rounded-xl text-white shadow-md hover:border-pink-200 hover:bg-pink-400/10 focus:ring-pink-400/10 text-sm"
             >
               <GoogleIcon />
               <span className="font-semibold text-slate-700 ">Google</span>
@@ -151,7 +151,7 @@ const SignupPage: React.FC = () => {
             Already have an account?{" "}
             <Link
               href="/login"
-              className="text-emerald-500 font-bold hover:underline"
+              className="text-pink-400 font-bold hover:underline"
             >
               Log In
             </Link>

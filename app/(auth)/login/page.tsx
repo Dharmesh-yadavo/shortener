@@ -35,7 +35,7 @@ const LoginPage: React.FC = () => {
 
   const inputStyles = (hasError: boolean) => `
     h-11 px-4 bg-slate-50 border-slate-200 rounded-lg transition-all duration-200
-    focus-visible:ring-2 focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-offset-0
+    focus-visible:ring-2 focus-visible:ring-pink-500/20 focus-visible:border-pink-500 focus-visible:outline-none focus-visible:ring-offset-0
     ${hasError ? "border-red-500 bg-red-50/50 focus-visible:ring-red-500/10 focus-visible:border-red-500" : ""}
   `;
 
@@ -86,7 +86,7 @@ const LoginPage: React.FC = () => {
                 <Label className={labelStyles}>Password</Label>
                 <Link
                   href="#"
-                  className="text-emerald-500 text-[10px] font-bold hover:underline"
+                  className="text-pink-400 text-[10px] font-bold hover:underline"
                 >
                   Forgot Password?
                 </Link>
@@ -105,7 +105,7 @@ const LoginPage: React.FC = () => {
 
             <Button
               type="submit"
-              className="w-full h-12 mt-2 bg-emerald-400 hover:bg-emerald-500 text-slate-900 font-bold rounded-xl shadow-lg shadow-emerald-200/50 transition-all"
+              className="w-full h-12 mt-2 bg-pink-300 hover:bg-pink-400/80 text-slate-900 font-bold rounded-xl shadow-lg shadow-pink-200/50 transition-all"
             >
               Sign In
             </Button>
@@ -121,7 +121,7 @@ const LoginPage: React.FC = () => {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-11 bg-white/50 border-slate-100 rounded-xl text-slate-700 shadow-sm hover:border-emerald-200 hover:bg-white transition-all text-sm font-semibold"
+              className="w-full h-11 bg-white/50 border-slate-100 rounded-xl text-slate-700 shadow-sm hover:border-pink-200 hover:bg-white transition-all text-sm font-semibold"
             >
               <GoogleIcon />
               Continue with Google
@@ -133,7 +133,7 @@ const LoginPage: React.FC = () => {
               Don&lsquo;t have an account?{" "}
               <Link
                 href="/register"
-                className="text-emerald-500 font-bold hover:underline"
+                className="text-pink-400 font-bold hover:underline"
               >
                 Sign Up
               </Link>

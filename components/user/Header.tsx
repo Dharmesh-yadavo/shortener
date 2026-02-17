@@ -14,6 +14,7 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
+import { motion } from "framer-motion";
 
 export const Header = () => {
   const pathname = usePathname();
@@ -22,7 +23,7 @@ export const Header = () => {
   const navigationItems = [
     { id: "/product", label: "Product" },
     { id: "/feature", label: "Feature" },
-    { id: "/pricing", label: "Pricing" },
+    { id: "/subscription", label: "Pricing" },
   ];
 
   const navigationButtons = [
@@ -31,7 +32,7 @@ export const Header = () => {
   ];
 
   return (
-    <header className="fixed top-0 w-full z-50 mt-4 md:mt-6 px-4">
+    <header className="fixed top-0 w-full z-10 mt-4 md:mt-6 px-4">
       <nav className="max-w-3xl mx-auto flex items-center justify-between p-2 border border-white/20 rounded-2xl backdrop-blur-md bg-white/70 dark:bg-zinc-900/70 shadow-lg shadow-black/5">
         {/* Logo */}
         <div className="shrink-0 pl-4">
@@ -50,10 +51,10 @@ export const Header = () => {
               key={item.id}
               href={item.id}
               className={cn(
-                "text-sm font-semibold transition-all hover:text-emerald-400",
+                "text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 active:scale-95",
                 pathname === item.id
-                  ? "text-emerald-500"
-                  : "text-zinc-600 dark:text-zinc-400",
+                  ? "text-pink-500"
+                  : "text-zinc-400 hover:text-pink-400",
               )}
             >
               {item.label}
@@ -72,7 +73,7 @@ export const Header = () => {
               <span className="shrink-0 transition-transform group-hover:-translate-y-0.5">
                 {item.label}
               </span>
-              <ArrowUpRight className="w-6 h-6 bg-emerald-300 dark:bg-emerald-400 p-1.5 rounded-full text-zinc-900 transition-all duration-300 group-hover:bg-emerald-400 group-hover:rotate-45" />
+              <ArrowUpRight className="w-6 h-6 bg-pink-300  p-1.5 rounded-full text-zinc-900 transition-all duration-300 group-hover:bg-black group-hover:text-white group-hover:rotate-45" />
             </Link>
           ))}
         </div>
@@ -84,7 +85,7 @@ export const Header = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-xl hover:bg-emerald-400/10 hover:text-emerald-500"
+                className="rounded-xl hover:bg-pink-400/10 hover:text-pink-500"
               >
                 <Menu className="w-6 h-6" />
               </Button>
@@ -96,7 +97,7 @@ export const Header = () => {
             >
               <div className="flex flex-col h-full p-6">
                 <SheetHeader className="flex flex-row items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-6">
-                  <SheetTitle className="text-2xl font-black tracking-tighter text-emerald-500">
+                  <SheetTitle className="text-2xl font-black tracking-tighter text-pink-500">
                     Shorten.io
                   </SheetTitle>
                   <SheetClose className="rounded-full p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"></SheetClose>
@@ -113,13 +114,13 @@ export const Header = () => {
                         className={cn(
                           "flex items-center justify-between p-4 rounded-2xl text-lg font-bold transition-all active:scale-95",
                           pathname === item.id
-                            ? "bg-emerald-400/10 text-emerald-500 border border-emerald-400/20"
+                            ? "bg-pink-400/10 text-pink-500 border border-pink-400/20"
                             : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900",
                         )}
                       >
                         {item.label}
                         {pathname === item.id && (
-                          <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                          <div className="w-2 h-2 rounded-full bg-pink-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                         )}
                       </Link>
                     ))}
@@ -136,9 +137,9 @@ export const Header = () => {
                           key={item.id}
                           href={item.id}
                           onClick={() => setOpen(false)}
-                          className="flex flex-col gap-4 p-5 rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-transparent hover:border-emerald-400/50 transition-all active:scale-95 group"
+                          className="flex flex-col gap-4 p-5 rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-transparent hover:border-pink-400/50 transition-all active:scale-95 group"
                         >
-                          <div className="w-10 h-10 rounded-full bg-emerald-400 flex items-center justify-center text-zinc-900 shadow-lg shadow-emerald-400/20 group-hover:rotate-45 transition-transform">
+                          <div className="w-10 h-10 rounded-full bg-pink-400 flex items-center justify-center text-zinc-900 shadow-lg shadow-pink-400/20 group-hover:rotate-45 transition-transform">
                             <ArrowUpRight className="w-6 h-6" />
                           </div>
                           <span className="font-bold text-zinc-900 dark:text-white">

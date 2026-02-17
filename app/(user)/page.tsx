@@ -22,14 +22,12 @@ const Home = () => {
       <GlassBackground opacity={1} />
       <Noise />
 
-      <Header />
-
       <main className="flex flex-col items-center justify-center mt-30">
         <section className="max-w-240 w-full flex flex-col items-center gap-10">
           <div className="text-center space-y-6 max-w-xl">
-            <h1 className="text-4xl md:text-6xl font-bold leading-[1.1] tracking-tight">
+            <h1 className="text-4xl md:text-6xl font-roboto font-bold leading-[1.1] tracking-tight">
               Elegant links,{" "}
-              <span className="italic text-[#30e8ab]/80">simplified.</span>
+              <span className="italic text-stone-800">simplified.</span>
             </h1>
             <p className="text-md md:text-lg max-w-xl mx-auto ">
               Shorten your URLs and generate custom QR codes in seconds with our
@@ -44,22 +42,22 @@ const Home = () => {
             <ToolSwitcher onValueChange={setMode} />
 
             {/* 2. Conditional Form UI */}
-            <div className="flex flex-col md:flex-row gap-2 w-full">
+            <div className="flex flex-col md:flex-row gap-2 mt-2 w-full">
               {mode === "URL" ? (
                 <>
                   <div className="relative grow flex items-center">
                     <Link
-                      className="absolute left-4 text-[#30e8ab]"
+                      className="absolute left-4 text-stone-900"
                       size={24}
                     />
                     <Input
-                      className="w-full h-14 pl-12 pr-4 rounded-lg placeholder:text-stone-400 focus-visible:ring-2 focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-offset-0"
+                      className="w-full h-12 pl-12 pr-4 rounded-lg placeholder:text-stone-400 focus-visible:ring-2 focus-visible:ring-pink-500/20 focus-visible:border-pink-500 focus-visible:outline-none focus-visible:ring-offset-0"
                       placeholder="Paste your long URL here..."
                     />
                   </div>
                   <Button
                     onClick={handleAction}
-                    className="h-14 px-8 bg-emerald-400 hover:bg-emerald-500 text-slate-900 font-bold rounded-xl shadow-md transition-all"
+                    className="h-12 px-8 bg-pink-300 hover:bg-pink-400 text-slate-900 font-bold rounded-xl shadow-md transition-all"
                   >
                     Shorten
                   </Button>
@@ -67,12 +65,12 @@ const Home = () => {
               ) : (
                 <div className="w-full flex flex-col gap-4">
                   <Input
-                    className="w-full h-14 pr-4 rounded-lg placeholder:text-stone-400 focus-visible:ring-2 focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-offset-0"
+                    className="w-full h-14 pr-4 rounded-lg placeholder:text-stone-400 focus-visible:ring-2 focus-visible:ring-pink-500/20 focus-visible:border-pink-500 focus-visible:outline-none focus-visible:ring-offset-0"
                     placeholder="Enter text or URL for QR code..."
                   />
                   <Button
                     onClick={handleAction}
-                    className="h-14 px-8 bg-emerald-400 hover:bg-emerald-500 text-slate-900 font-bold rounded-xl shadow-md transition-all"
+                    className="h-12 px-8 bg-pink-300 hover:bg-pink-400 text-slate-900 font-bold rounded-xl shadow-md transition-all"
                   >
                     Generate QR
                   </Button>
@@ -113,25 +111,6 @@ const Home = () => {
             </div>
           </div>
         </section>
-
-        {/* Features Section */}
-        {/* <section className="max-w-[960px] w-full mt-40 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <FeatureCard
-            icon={<BarChart />}
-            title="Advanced Analytics"
-            desc="Track every click and scan with real-time data insights."
-          />
-          <FeatureCard
-            icon={<Link />}
-            title="Custom Links"
-            desc="Create branded short links that build trust and engagement."
-          />
-          <FeatureCard
-            icon={<QrCode />}
-            title="Dynamic QR Codes"
-            desc="Generate and edit QR codes even after they've been printed."
-          />
-        </section> */}
       </main>
 
       {/* <Footer /> */}
