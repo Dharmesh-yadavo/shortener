@@ -13,8 +13,6 @@ import {
   and,
   isNull,
   gte,
-  gt,
-  max,
 } from "drizzle-orm";
 
 export async function getUserAnalytics(userId: number) {

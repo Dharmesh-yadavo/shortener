@@ -1,5 +1,6 @@
+"use server";
 import { db } from "@/config/db";
-import { shortLinkTable, clickLogs } from "@/drizzle/schema";
+import { clickLogs, shortLinkTable } from "@/drizzle/schema";
 import { eq, sql } from "drizzle-orm";
 import { redirect, notFound } from "next/navigation";
 import { headers } from "next/headers";
@@ -28,20 +29,22 @@ export default async function RedirectPage({
   const referrer = headerList.get("referer") || "Direct";
   const deviceType = device.type || "desktop";
 
-  const country = headerList.get("x-vercel-ip-country") || "Unknown"; // works on vercel devlopment
+  const country = headerList.get("x-vercel-ip-country") || "Unknown";
   const city = headerList.get("x-vercel-ip-city") || "Unknown";
   const region = headerList.get("x-vercel-ip-country-region") || "Unknown";
-  const latitude = headerList.get("x-vercel-ip-latitude") || "Unknown";
-  const longitude = headerList.get("x-vercel-ip-longitude") || "Unknown";
+  const latitude = headerList.get("x-vercel-ip-latitude") || "unknown";
+  const longitude = headerList.get("x-vercel-ip-longitude") || "unknown";
 
   // 3. Update clicks and log data in parallel
-  await Promise.all([
-    db
+  await db.transaction(async (tx) => {
+    // Update link click count
+    await tx
       .update(shortLinkTable)
       .set({ clicks: sql`${shortLinkTable.clicks} + 1` })
-      .where(eq(shortLinkTable.id, link.id)),
+      .where(eq(shortLinkTable.id, link.id));
 
-    db.insert(clickLogs).values({
+    // Log the click details
+    await tx.insert(clickLogs).values({
       linkId: link.id,
       ipAddress: ip,
       country: country,
@@ -51,8 +54,8 @@ export default async function RedirectPage({
       longitude: longitude,
       device: deviceType,
       referrer: referrer,
-    }),
-  ]);
+    });
+  });
 
   // 4. Redirect
   redirect(link.url);

@@ -48,6 +48,7 @@ export const shortLinkTable = mysqlTable("short_link", {
   url: text().notNull(),
   shortCode: varchar("short_code", { length: 10 }).unique().notNull(),
   type: varchar("type", { length: 20 }).default("link").notNull(),
+  hasQr: boolean().default(false).notNull(),
   clicks: int().default(0).notNull(),
   isActive: boolean("is_active").default(true).notNull(),
   isHidden: boolean("is_hidden").default(false).notNull(),
@@ -59,15 +60,15 @@ export const shortLinkTable = mysqlTable("short_link", {
 
 export const clickLogs = mysqlTable("click_logs", {
   id: int().primaryKey().autoincrement(),
-  linkId: int()
+  linkId: int("linkId")
     .notNull()
     .references(() => shortLinkTable.id, { onDelete: "cascade" }),
   ipAddress: varchar("ip_address", { length: 255 }),
   country: varchar("country", { length: 100 }).default("Unknown"),
   city: varchar("city", { length: 100 }).default("Unknown"),
   region: varchar("region", { length: 100 }).default("Unknown"),
-  latitude: decimal("latitude", { precision: 10, scale: 8 }),
-  longitude: decimal("longitude", { precision: 11, scale: 8 }),
+  latitude: varchar("latitude", { length: 20 }),
+  longitude: varchar("longitude", { length: 20 }),
   device: varchar("device", { length: 50 }),
   referrer: varchar("referrer", { length: 255 }).default("Direct"),
   clickedAt: timestamp("clicked_at").defaultNow().notNull(),

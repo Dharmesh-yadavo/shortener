@@ -94,13 +94,13 @@ export const DetailedQrComp = ({
 
             <div className="space-y-1 font-sans">
               <div className="flex items-center gap-2">
-                <a
+                <Link
                   href={fullShortUrl}
                   target="_blank"
                   className="text-blue-600 font-extrabold text-lg hover:underline flex items-center gap-1.5"
                 >
                   {fullShortUrl} <ExternalLink size={14} />
-                </a>
+                </Link>
               </div>
               <p className="text-slate-400 text-xs max-w-xl truncate">
                 <span className="text-slate-300 font-bold uppercase text-[9px]">

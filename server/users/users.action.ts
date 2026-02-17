@@ -372,7 +372,7 @@ export const qrCodeAction = async (data: shortenerUserData) => {
 
         const [res] = await tx.insert(shortLinkTable).values({
           userId: user.id,
-          title,
+          title: title,
           url: url,
           shortCode,
           type: "qr",
@@ -517,6 +517,67 @@ export const createQrAction = async ({ data }: { data: CreateQrData }) => {
     }
   } catch (error) {
     console.error("Failed to create QR Code:", error);
+    return { status: "error", message: "Something went wrong" };
+  }
+};
+
+export const qrCodeCreationInLink = async ({
+  url,
+  shortCode,
+  linkId,
+}: {
+  url: string;
+  shortCode: string;
+  linkId: number;
+}) => {
+  const user = await getCurrentUser();
+  if (!user || !user.id) return redirect("/");
+
+  const limits = {
+    free: 5,
+    pro: 30,
+    business: Number.MAX_SAFE_INTEGER,
+  };
+
+  const userPlan = (user.plan?.toLowerCase() || "free") as keyof typeof limits;
+  const maxQrs = limits[userPlan];
+  const currentQrs = user.qrsCreated ?? 0;
+
+  try {
+    if (currentQrs < maxQrs) {
+      return await db.transaction(async (tx) => {
+        await tx
+          .update(users)
+          .set({ qrsCreated: sql`${users.qrsCreated} + 1` })
+          .where(eq(users.id, user.id));
+
+        await tx
+          .update(shortLinkTable)
+          .set({ hasQr: true })
+          .where(eq(shortLinkTable.shortCode, shortCode));
+
+        await tx.insert(qrCodeTable).values({
+          userId: user.id,
+          linkId: linkId,
+        });
+
+        return {
+          status: "success",
+          message: "Qr Code Generated Successfully",
+          data: {
+            shortCode: shortCode,
+            url: url,
+          },
+        };
+      });
+    } else {
+      return {
+        status: "error",
+        message: "You've reached your plan's QR limit. Upgrade to create more!",
+      };
+    }
+  } catch (error) {
+    console.error("Failed to create Qr Code:", error);
     return { status: "error", message: "Something went wrong" };
   }
 };
