@@ -17,16 +17,20 @@ import {
   ArrowUpRight,
   Sparkles,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import Link from "next/link";
-import { handleDeleteAction } from "@/server/users/users.action";
+import {
+  handleDeleteAction,
+  qrCodeCreationInLink,
+} from "@/server/users/users.action";
 import { toast } from "sonner";
 import { PasswordModal } from "./PasswordModal";
 import { ShareDialog } from "./ShareDialog";
 import { title } from "process";
 import { BarChartTimeline } from "@/components/common/BarChartTimeline";
+import QRCode from "react-qr-code";
 
 interface DetailedLinksProps {
   id: number;
@@ -35,6 +39,7 @@ interface DetailedLinksProps {
   url: string;
   shortCode: string;
   type: string;
+  hasQr: boolean;
   clicks: number;
   isActive: boolean;
   isHidden: boolean;
@@ -63,6 +68,55 @@ export const DetailedlinkComp = ({
   const [mounted, setMounted] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // 1. Add this state at the top of your component
+  // const [showQR, setShowQR] = useState(false);
+  const qrRef = useRef<HTMLDivElement>(null);
+
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  // Use the database value as the source of truth
+  const hasQR = links.hasQr;
+
+  const router = useRouter();
+
+  const handleCreateQR = async () => {
+    setIsGenerating(true);
+    const result = await qrCodeCreationInLink({
+      url: links.url,
+      shortCode: links.shortCode,
+      linkId: links.id,
+    });
+
+    if (result.status === "success") {
+      toast.success("QR Code generated and saved!");
+    } else {
+      toast.error("Something went wrong.");
+    }
+    router.refresh();
+    setIsGenerating(false);
+  };
+
+  // 2. Reuse the download function from before
+  const downloadQRCode = () => {
+    const svg = qrRef.current?.querySelector("svg");
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new window.Image();
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx?.drawImage(img, 0, 0);
+      const pngFile = canvas.toDataURL("image/png");
+      const downloadLink = document.createElement("a");
+      downloadLink.download = `${links.shortCode}-qr.png`;
+      downloadLink.href = pngFile;
+      downloadLink.click();
+    };
+    img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
+  };
 
   const getDomain = (url: string) => {
     try {
@@ -120,7 +174,7 @@ export const DetailedlinkComp = ({
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-5 font-sans">
+    <div className="max-w-5xl mx-auto p-6 space-y-5 ">
       {/* 1. HEADER SECTION */}
       <div className="bg-white rounded-xl p-6 border border-slate-100 shadow-sm relative overflow-hidden">
         <div className="flex justify-between items-start">
@@ -147,15 +201,15 @@ export const DetailedlinkComp = ({
               </div>
             </div>
 
-            <div className="space-y-1 font-sans">
+            <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <a
+                <Link
                   href={shortUrl}
                   target="_blank"
                   className="text-blue-600 font-extrabold text-lg hover:underline flex items-center gap-1.5"
                 >
                   {shortUrl} <ExternalLink size={14} />
-                </a>
+                </Link>
                 <button
                   onClick={handleCopy}
                   className="p-1 text-slate-400 hover:text-blue-600 transition-colors"
@@ -213,22 +267,78 @@ export const DetailedlinkComp = ({
       {/* 2. UTILITY CARDS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* CARD A: QR CODE */}
-        <Card className="border-slate-100 shadow-sm hover:border-blue-100 transition-all">
+        <Card className="border-slate-100 shadow-sm hover:border-blue-100 transition-all group overflow-hidden">
           <CardContent className="p-5 flex flex-col items-center justify-between h-full space-y-4">
             <div className="flex items-center justify-between w-full">
               <h3 className="font-bold text-slate-800 text-[11px] uppercase tracking-wider">
                 QR Code
               </h3>
-              <QrCode size={14} className="text-slate-400" />
+              <QrCode
+                size={14}
+                className={hasQR ? "text-blue-500" : "text-slate-400"}
+              />
             </div>
-            <div className="w-24 h-24 bg-slate-50 rounded-lg border-2 border-dashed border-slate-200 flex items-center justify-center p-3">
-              <QrCode size={32} className="text-slate-300" />
+
+            <div className="relative w-40 h-40 flex items-center justify-center bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 p-4">
+              {hasQR ? (
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <div
+                    ref={qrRef}
+                    className="bg-white p-2 rounded-lg shadow-sm"
+                  >
+                    <QRCode
+                      value={shortUrl}
+                      size={120}
+                      style={{
+                        height: "auto",
+                        maxWidth: "100%",
+                        width: "100%",
+                      }}
+                      viewBox={`0 0 256 256`}
+                    />
+                  </div>
+
+                  <div className="absolute inset-0 bg-slate-900/70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 backdrop-blur-[2px] rounded-lg">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={downloadQRCode}
+                      className="h-8 text-[10px] font-bold"
+                    >
+                      Download PNG
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-2 text-slate-300">
+                  <QrCode size={40} strokeWidth={1} />
+                  <p className="text-[10px] font-medium">No QR Generated</p>
+                </div>
+              )}
             </div>
+
+            {/* FIX: Changed onSubmit to onClick and added proper loading state */}
             <Button
               size="sm"
-              className="w-full bg-blue-600 hover:bg-blue-700 font-bold h-9 rounded-lg text-xs"
+              onClick={handleCreateQR}
+              disabled={hasQR || isGenerating}
+              className={`w-full font-bold h-9 rounded-lg text-xs ${
+                hasQR
+                  ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-50"
+                  : "bg-blue-600"
+              }`}
             >
-              <Plus size={14} className="mr-1.5" /> Create QR
+              {isGenerating ? (
+                "Generating..."
+              ) : hasQR ? (
+                <span className="flex items-center gap-1.5">
+                  <Check size={14} /> Generated
+                </span>
+              ) : (
+                <span className="flex items-center gap-1.5">
+                  <Plus size={14} /> Create QR
+                </span>
+              )}
             </Button>
           </CardContent>
         </Card>

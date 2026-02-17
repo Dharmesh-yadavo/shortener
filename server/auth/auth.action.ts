@@ -85,7 +85,7 @@ export const LoginFormAction = async (data: LoginUserData) => {
   }
 };
 
-// log out
+//! log out
 
 export const logoutUserAction = async () => {
   const cookieStore = await cookies();
@@ -102,5 +102,5 @@ export const logoutUserAction = async () => {
   await invalidateSession(hashedToken);
   cookieStore.delete("session");
 
-  return redirect("/login");
+  return { success: true };
 };
