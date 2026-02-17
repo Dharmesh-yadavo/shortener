@@ -5,6 +5,7 @@ import { eq, sql } from "drizzle-orm";
 import { redirect, notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { userAgent } from "next/server"; // Built-in Next.js helper
+import PasswordGate from "@/components/user/dashboard/links/PasswordGate";
 
 export default async function RedirectPage({
   params,
@@ -23,6 +24,14 @@ export default async function RedirectPage({
     .limit(1);
 
   if (!link || !link.url) return notFound();
+
+  if (link.password) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-50">
+        <PasswordGate shortCode={shortCode} originalUrl={link.url} />
+      </div>
+    );
+  }
 
   // 2. Extract detailed analytics data
   const ip = headerList.get("x-forwarded-for")?.split(",")[0] || "unknown";

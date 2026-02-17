@@ -174,7 +174,7 @@ export const DetailedlinkComp = ({
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-5 ">
+    <div className="max-w-5xl mx-auto p-6 font-sans space-y-5 ">
       {/* 1. HEADER SECTION */}
       <div className="bg-white rounded-xl p-6 border border-slate-100 shadow-sm relative overflow-hidden">
         <div className="flex justify-between items-start">

@@ -18,6 +18,7 @@ import {
 import { and, eq, ne, sql } from "drizzle-orm";
 import argon2 from "argon2";
 import { revalidatePath } from "next/cache";
+import { getLinkDetails } from "./users.query";
 
 export const shortLinkAction = async (data: shortenerUserData) => {
   const user = await getCurrentUser();
@@ -189,6 +190,31 @@ export const setLinkPasswordAction = async (
   } catch (error) {
     console.error(error);
     return { status: "error", message: "Failed to set password" };
+  }
+};
+
+export const verifyLinkPasswordAction = async (
+  shortCode: string,
+  inputPassword: string,
+) => {
+  console.log(inputPassword);
+  try {
+    const link = await getLinkDetails(shortCode);
+
+    if (!link || !link.password) {
+      return { success: false, error: "Link not found or no password set." };
+    }
+
+    const isValid = await argon2.verify(link.password, inputPassword);
+
+    if (isValid) {
+      return { success: true };
+    } else {
+      return { success: false, error: "Incorrect password." };
+    }
+  } catch (error) {
+    console.error("Verification error:", error);
+    return { success: false, error: "An internal error occurred." };
   }
 };
 
