@@ -4,7 +4,7 @@ import { clickLogs, shortLinkTable } from "@/drizzle/schema";
 import { eq, sql } from "drizzle-orm";
 import { redirect, notFound } from "next/navigation";
 import { headers } from "next/headers";
-import { userAgent } from "next/server"; // Built-in Next.js helper
+import { userAgent } from "next/server";
 import PasswordGate from "@/components/user/dashboard/links/PasswordGate";
 
 export default async function RedirectPage({

@@ -118,14 +118,16 @@ const LoginPage: React.FC = () => {
           </div>
 
           <div className="mt-5 space-y-3 mb-6">
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full h-11 bg-white/50 border-slate-100 rounded-xl text-slate-700 shadow-sm hover:border-pink-200 hover:bg-white transition-all text-sm font-semibold"
-            >
-              <GoogleIcon />
-              Continue with Google
-            </Button>
+            <Link href="/google">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-11 bg-white/50 border-slate-100 rounded-xl text-slate-700 shadow-sm hover:border-pink-200 hover:bg-white transition-all text-sm font-semibold"
+              >
+                <GoogleIcon />
+                Continue with Google
+              </Button>
+            </Link>
           </div>
 
           <div className="mt-8 text-center">

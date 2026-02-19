@@ -6,7 +6,6 @@ import {
   timestamp,
   text,
   boolean,
-  decimal,
   mysqlEnum,
 } from "drizzle-orm/mysql-core";
 
@@ -14,7 +13,7 @@ export const users = mysqlTable("users", {
   id: int().primaryKey().autoincrement(),
   name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
-  password: varchar({ length: 255 }).notNull(),
+  password: varchar({ length: 255 }),
   image: varchar({ length: 255 }),
   stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
   stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
@@ -25,6 +24,18 @@ export const users = mysqlTable("users", {
   deletedAt: timestamp("deleted_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+});
+
+export const oauthAccountsTable = mysqlTable("oauth_accounts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  provider: mysqlEnum("provider", ["google"]).notNull(),
+  providerAccountId: varchar("provider_account_id", { length: 255 })
+    .notNull()
+    .unique(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const sessionTable = mysqlTable("sessions", {

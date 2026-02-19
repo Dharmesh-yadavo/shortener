@@ -136,15 +136,17 @@ const SignupPage: React.FC = () => {
             </span>
           </div>
 
-          <div className="mt-6 flex justify-center">
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full h-11 bg-white/50 border-slate-100 rounded-xl text-white shadow-md hover:border-pink-200 hover:bg-pink-400/10 focus:ring-pink-400/10 text-sm"
-            >
-              <GoogleIcon />
-              <span className="font-semibold text-slate-700 ">Google</span>
-            </Button>
+          <div className="mt-5 space-y-3 mb-6">
+            <Link href="/google">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-11 bg-white/50 border-slate-100 rounded-xl text-slate-700 shadow-sm hover:border-pink-200 hover:bg-white transition-all text-sm font-semibold"
+              >
+                <GoogleIcon />
+                Continue with Google
+              </Button>
+            </Link>
           </div>
 
           <p className="mt-6 flex justify-center items-center text-xs text-slate-500">
