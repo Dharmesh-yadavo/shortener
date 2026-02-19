@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { createCheckoutSession } from "@/server/subscription/action.stripe";
-import { Check, X, Sparkles } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 const PLANS = [
@@ -54,9 +54,6 @@ export function SubscriptionTable({
 }) {
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center bg-slate-50/50 overflow-x-hidden px-4 py-24">
-      {/* Background Decorative Element */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-slate-200/50 to-transparent pointer-events-none -z-10" />
-
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
         <motion.div
@@ -66,16 +63,12 @@ export function SubscriptionTable({
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-6">
-            <Sparkles size={14} />
-            <span>Pricing Plans</span>
-          </div>
-          <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
             Simple, transparent <span className="text-indigo-600">pricing</span>
           </h2>
-          <p className="text-slate-500 max-w-2xl mx-auto text-lg md:text-xl">
-            Choose the plan that's right for your business. No hidden fees or
-            surprise charges.
+          <p className="text-slate-500 max-w-2xl mx-auto text-lg md:text-lg">
+            Choose the plan that&apos;s right for your business. No hidden fees
+            or surprise charges.
           </p>
         </motion.div>
 
@@ -89,10 +82,10 @@ export function SubscriptionTable({
               transition={{ delay: index * 0.1, duration: 0.5 }}
               viewport={{ once: true }}
               className={cn(
-                "relative flex flex-col p-8 rounded-[2.5rem] bg-white border border-slate-200 transition-all duration-300",
-                "shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)]",
+                "relative flex flex-col p-6 rounded-[2.5rem] bg-white border border-slate-200 transition-all duration-300",
+                "shadow-2xs hover:shadow-2xl",
                 plan.popular &&
-                  "border-indigo-500 ring-1 ring-indigo-500 scale-105 z-10 bg-white",
+                  "border-indigo-500 ring-1 ring-indigo-500 scale-105 bg-white",
               )}
             >
               {plan.popular && (
@@ -101,7 +94,7 @@ export function SubscriptionTable({
                 </div>
               )}
 
-              <div className="mb-8">
+              <div className="mb-4">
                 <h3 className="text-sm font-black text-indigo-600 uppercase tracking-widest mb-2">
                   {plan.name}
                 </h3>
@@ -109,7 +102,7 @@ export function SubscriptionTable({
                   {plan.description}
                 </p>
                 <div className="flex items-baseline">
-                  <span className="text-5xl font-black text-slate-900 tracking-tighter">
+                  <span className="text-4xl font-black text-slate-900 tracking-tighter">
                     {plan.price}
                   </span>
                   <span className="ml-1 text-slate-400 font-semibold text-lg">
@@ -118,9 +111,9 @@ export function SubscriptionTable({
                 </div>
               </div>
 
-              <div className="h-px w-full bg-slate-100 mb-8" />
+              <div className="h-px w-full bg-slate-100 mb-4" />
 
-              <ul className="space-y-4 mb-10 flex-1">
+              <ul className="space-y-4 mb-8 flex-1">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-center gap-4 group">
                     <div
@@ -132,7 +125,7 @@ export function SubscriptionTable({
                       )}
                     >
                       {feature.included ? (
-                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                        <Check className="w-3.5 h-3.5 stroke-3" />
                       ) : (
                         <X className="w-3.5 h-3.5" />
                       )}
