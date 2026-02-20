@@ -37,6 +37,9 @@ const createUserSession = async ({
 };
 
 export const createSessionAndSetCookies = async (userId: number) => {
+  //
+  await db.delete(sessionTable).where(eq(sessionTable.userId, userId));
+
   const token = generateSessionToken();
   const headersList = await headers();
   const ip = await getIPAddress();
@@ -54,6 +57,8 @@ export const createSessionAndSetCookies = async (userId: number) => {
     secure: true,
     httpOnly: true,
     maxAge: SESSION_LIFETIME,
+    sameSite: "lax",
+    path: "/",
   });
 };
 
@@ -74,6 +79,7 @@ export const validateSessionAndGetUser = async (session: string) => {
       },
       name: users.name,
       email: users.email,
+      password: users.password,
       plan: users.plan,
       linksCreated: users.linksCreated,
       stripeCustomerId: users.stripeCustomerId,

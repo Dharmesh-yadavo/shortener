@@ -309,6 +309,45 @@ export const profileSettingAction = async ({
   }
 };
 
+//!
+// export const updatePasswordAction = async ({
+//   data,
+//   userId,
+// }: {
+//   data: UpdatePasswordData;
+//   userId: number;
+// }) => {
+//   try {
+//     const result = updatePasswordSchema.safeParse(data);
+//     if (!result.success)
+//       return { status: "error", message: result.error.issues[0].message };
+
+//     const { currentPassword, newPassword } = result.data;
+
+//     const [user] = await db
+//       .select()
+//       .from(users)
+//       .where(eq(users.id, userId))
+//       .limit(1);
+
+//     const isMatch = await argon2.verify(user.password!, currentPassword);
+//     if (!isMatch)
+//       return { status: "error", message: "Incorrect current password" };
+
+//     const hashedPassword = await argon2.hash(newPassword);
+
+//     await db
+//       .update(users)
+//       .set({ password: hashedPassword })
+//       .where(eq(users.id, userId));
+
+//     return { status: "success", message: "Password updated successfully" };
+//   } catch (error) {
+//     console.error(error);
+//     return { status: "error", message: "Failed to update password" };
+//   }
+// };
+
 export const updatePasswordAction = async ({
   data,
   userId,
@@ -317,33 +356,39 @@ export const updatePasswordAction = async ({
   userId: number;
 }) => {
   try {
-    const result = updatePasswordSchema.safeParse(data);
-    if (!result.success)
-      return { status: "error", message: result.error.issues[0].message };
+    const user = await getCurrentUser();
+    if (!user) return { status: "error", message: "User not found" };
 
-    const { currentPassword, newPassword } = result.data;
+    const hasExistingPassword = !!user.password;
 
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
+    // 1. Verify current password ONLY if they already have one
+    if (hasExistingPassword) {
+      if (!data.currentPassword) {
+        return {
+          status: "error",
+          message: "Current password is required to make changes",
+        };
+      }
+      const isValid = await argon2.verify(user.password!, data.currentPassword);
+      if (!isValid)
+        return { status: "error", message: "Incorrect current password" };
+    }
 
-    const isMatch = await argon2.verify(user.password, currentPassword);
-    if (!isMatch)
-      return { status: "error", message: "Incorrect current password" };
-
-    const hashedPassword = await argon2.hash(newPassword);
+    // 2. Hash new password with Argon2
+    const hashedPassword = await argon2.hash(data.newPassword);
 
     await db
       .update(users)
       .set({ password: hashedPassword })
       .where(eq(users.id, userId));
 
-    return { status: "success", message: "Password updated successfully" };
+    return {
+      status: "success",
+      message: hasExistingPassword ? "Password updated!" : "Password created!",
+    };
   } catch (error) {
     console.error(error);
-    return { status: "error", message: "Failed to update password" };
+    return { status: "error", message: "Internal server error" };
   }
 };
 

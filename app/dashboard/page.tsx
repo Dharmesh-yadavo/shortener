@@ -14,7 +14,14 @@ const DashboardPage = async () => {
 
   console.log(topLink);
 
-  return <Dashboard serverUser={user} topLinkData={topLink} />;
+  const dummyTopLinkData = {
+    shortCode: "",
+    clicks: 0,
+  };
+
+  const topLinkData = topLink === undefined ? dummyTopLinkData : topLink;
+
+  return <Dashboard serverUser={user} topLinkData={topLinkData} />;
 };
 
 export default DashboardPage;

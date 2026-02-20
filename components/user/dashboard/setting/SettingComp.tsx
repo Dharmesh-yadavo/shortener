@@ -11,6 +11,7 @@ type UserData = {
   id: number;
   name: string;
   email: string;
+  password: string | null;
   linksCreated: number;
   stripeCustomerId: string | null;
   plan: "free" | "pro" | "business" | null;
@@ -61,7 +62,7 @@ export const SettingsComp = ({ user }: { user: UserData }) => {
         {mode === "profile" ? (
           <ProfileSettingComp user={user} />
         ) : mode === "security" ? (
-          <SecuritySettingComp userId={user.id} />
+          <SecuritySettingComp userId={user.id} password={user.password} />
         ) : (
           <ManageSubscriptionComp user={user} />
         )}

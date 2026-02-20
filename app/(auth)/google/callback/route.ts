@@ -9,6 +9,7 @@ import {
   getUserWithOauthId,
   linkUserWithOauth,
 } from "@/server/auth/auth.services";
+import { createSessionAndSetCookies } from "@/server/auth/use-cases/sessions";
 
 interface GoogleClaims {
   sub: string;
@@ -73,7 +74,7 @@ export async function GET(request: Request) {
 
     // 4. Create Session
     // In Next.js, authenticateUser should probably handle setting the session cookie
-    // await authenticateUser(user);
+    await createSessionAndSetCookies(user.id);
 
     // 5. Cleanup OAuth Cookies
     cookieStore.delete("google_oauth_state");
@@ -84,5 +85,5 @@ export async function GET(request: Request) {
   }
 
   // Final Redirect
-  return redirect("/");
+  return redirect("/dashboard");
 }
