@@ -3,6 +3,10 @@ import { drizzle } from "drizzle-orm/mysql2";
 
 const pool = mysql2.createPool({
   uri: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: true, // Crucial for production safety
+  },
+  connectionLimit: 1,
 });
 
 export const db = drizzle(pool);
