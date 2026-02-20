@@ -12,12 +12,14 @@ type DialogType = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   generatedLink: string | null;
+  shortCode: string | null;
 };
 
 export const UrlDialogComp = ({
   open,
   onOpenChange,
   generatedLink,
+  shortCode,
 }: DialogType) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -44,12 +46,14 @@ export const UrlDialogComp = ({
             </Link>
           </h3>
           <div className="flex gap-2 justify-center">
-            <Button
-              variant="outline"
-              className="flex gap-2 text-blue-600 border-blue-200"
-            >
-              <BarChart2 size={18} /> View link details
-            </Button>
+            <Link href={`/dashboard/links/${shortCode}`}>
+              <Button
+                variant="outline"
+                className="flex gap-2 text-blue-600 border-blue-200"
+              >
+                <BarChart2 size={18} /> View link details
+              </Button>
+            </Link>
             <Button
               className="flex gap-2 bg-blue-600 hover:bg-blue-700"
               onClick={() => {

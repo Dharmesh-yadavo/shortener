@@ -35,6 +35,7 @@ export const UrlShortener = ({
 
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [shortCode, setShortCode] = useState("");
 
   const onSubmit = async (data: shortenerUserData) => {
     // console.log(data);
@@ -44,6 +45,7 @@ export const UrlShortener = ({
       toast.success(result.message);
       const fullUrl = `${window.location.origin}/${result.data?.shortCode}`;
       setGeneratedLink(fullUrl);
+      setShortCode(result.data?.shortCode);
       setIsOpen(true);
       reset();
     } else {
@@ -112,6 +114,7 @@ export const UrlShortener = ({
         open={isOpen}
         onOpenChange={setIsOpen}
         generatedLink={generatedLink}
+        shortCode={shortCode}
       />
 
       {/* Footer for Links */}
