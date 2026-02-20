@@ -20,7 +20,7 @@ const LinksDetailPage = async ({
 
   const linkAnalyticData = await linkAnalyticsAction(shortCode);
 
-  console.log(linkAnalyticData);
+  // console.log(linkAnalyticData);
 
   return (
     <DetailedlinkComp

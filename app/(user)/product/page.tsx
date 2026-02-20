@@ -140,9 +140,9 @@ const AnalyticsMockup: React.FC = () => (
 /** --- MAIN PAGE COMPONENT --- */
 export default function ProductPage(): JSX.Element {
   return (
-    <div className="min-h-screen bg-white font-roboto selection:bg-teal-50 overflow-x-hidden">
+    <div className="min-h-screen  bg-white font-roboto selection:bg-teal-50 overflow-x-hidden">
       {/* --- HERO SECTION --- */}
-      <section className="mt-30 pb-20 px-6 text-center">
+      <section className="mt-25 pb-20 px-6 text-center">
         <motion.div
           variants={fadeIn}
           initial="initial"
@@ -162,7 +162,7 @@ export default function ProductPage(): JSX.Element {
       </section>
 
       {/* --- MAIN CONTENT CONTAINER --- */}
-      <div className="max-w-6xl mx-auto px-6 space-y-24 pb-32">
+      <div className="max-w-6xl mx-auto px-6 space-y-24 pb-20">
         <FeatureSection
           number="01"
           title="Paste &"
@@ -170,7 +170,7 @@ export default function ProductPage(): JSX.Element {
           description="The journey begins with simplicity. Drop your long, cumbersome URLs into our high-performance engine."
           bullets={["Instant link generation", "Secure HTTPS by default"]}
           colorClass="text-teal-400"
-          tilt="rotate-[-2deg]"
+          tilt="rotate-[-4deg]"
         >
           <ShortenMockup />
         </FeatureSection>
@@ -183,7 +183,7 @@ export default function ProductPage(): JSX.Element {
           bullets={["Custom Domains", "QR Styles", "UTM Tags"]}
           colorClass="text-pink-400"
           reverse={true}
-          tilt="rotate-[2deg]"
+          tilt="rotate-[4deg]"
         >
           <QRMockup />
         </FeatureSection>
@@ -199,13 +199,13 @@ export default function ProductPage(): JSX.Element {
             "Device Insights",
           ]}
           colorClass="text-teal-400"
-          tilt="rotate-[-2deg]"
+          tilt="rotate-[-4deg]"
         >
           <AnalyticsMockup />
         </FeatureSection>
 
         {/* --- COMPACT CTA SECTION --- */}
-        <section className="pt-16">
+        <section className="pt-10">
           <motion.div
             variants={fadeIn}
             initial="initial"
@@ -252,7 +252,7 @@ function FeatureSection({
   children,
 }: FeatureSectionProps): JSX.Element {
   return (
-    <section className="py-8">
+    <section className="py-6">
       <div
         className={`flex flex-col ${reverse ? "md:flex-row-reverse" : "md:flex-row"} items-center gap-16 md:gap-32`}
       >
@@ -266,7 +266,7 @@ function FeatureSection({
           className="flex-1 w-full max-w-lg"
         >
           <div
-            className={`aspect-4/3 bg-white border border-zinc-100 rounded-[2.5rem] shadow-2xl flex flex-col relative overflow-hidden transition-transform duration-700 ${tilt}`}
+            className={`aspect-4/3 bg-white border border-zinc-100 rounded-[2.5rem] shadow-2xl flex flex-col relative overflow-hidden transition-transform duration-700 ${tilt} hover:rotate-0  `}
           >
             {/* Header / Mac Style Dots */}
             <div className="p-5 border-b border-zinc-50 flex gap-2 bg-zinc-50/50">

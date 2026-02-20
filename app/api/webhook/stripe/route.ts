@@ -60,7 +60,7 @@ export async function POST(req: Request) {
           })
           .where(eq(users.id, Number(userId)));
 
-        console.log(`⭐ Success: User ${userId} is now ${planToSet}`);
+        // console.log(`⭐ Success: User ${userId} is now ${planToSet}`);
       } else {
         console.error("❌ Missing userId or plan mapping. Check metadata!");
       }

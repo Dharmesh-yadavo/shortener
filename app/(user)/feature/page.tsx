@@ -9,7 +9,6 @@ import {
   MoreHorizontal,
   ExternalLink,
   QrCode,
-  CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -171,9 +170,9 @@ const FeatureList: React.FC<FeatureItem> = ({ items, color }) => (
 
 const MockupContainer: React.FC<MockupProps> = ({ children, tilt }) => (
   <motion.div
-    whileHover={{ scale: 1.05, rotate: 0 }}
+    whileHover={{ scale: 1.05 }}
     className={cn(
-      "aspect-[4/3] w-full max-w-md mx-auto rounded-[2.5rem] flex items-center justify-center p-10 transition-all duration-700",
+      "aspect-4/3 w-full max-w-md mx-auto rounded-[2.5rem] flex items-center justify-center p-10 transition-all duration-700 hover:rotate-0",
       "shadow-[0_20px_50px_rgba(0,0,0,0.05)] bg-white border border-zinc-100/50",
       tilt,
     )}
@@ -228,7 +227,7 @@ export default function FeaturesPage() {
             />
           </div>
           <div className="flex-1">
-            <MockupContainer tilt="rotate-[-2deg]">
+            <MockupContainer tilt="rotate-[-4deg]">
               <LinkPreviewUI />
             </MockupContainer>
           </div>
@@ -257,7 +256,7 @@ export default function FeaturesPage() {
             />
           </div>
           <div className="flex-1">
-            <MockupContainer tilt="rotate-[2deg]">
+            <MockupContainer tilt="rotate-[4deg]">
               <QRStudioUI />
             </MockupContainer>
           </div>
@@ -286,7 +285,7 @@ export default function FeaturesPage() {
             />
           </div>
           <div className="flex-1">
-            <MockupContainer tilt="rotate-[-2deg]">
+            <MockupContainer tilt="rotate-[-4deg]">
               <EnterpriseAnalyticsUI />
             </MockupContainer>
           </div>

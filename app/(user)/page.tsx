@@ -1,13 +1,11 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import Noise from "@/components/Noise";
-import { GlassBackground } from "@/components/common/GlassBackground";
 import ToolSwitcher from "@/components/user/ToolSwitcher";
 import { Link, Box, Triangle, Pentagon, LayoutGrid } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Header } from "@/components/user/Header";
 import { useRouter } from "next/navigation";
+import Noise from "@/components/Noise";
 
 const Home = () => {
   const router = useRouter();
@@ -19,7 +17,6 @@ const Home = () => {
 
   return (
     <div className="min-h-screen relative overflow-x-hidden font-sans">
-      <GlassBackground opacity={1} />
       <Noise />
 
       <main className="flex flex-col items-center justify-center mt-30">

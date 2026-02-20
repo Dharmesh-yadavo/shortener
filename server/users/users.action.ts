@@ -197,7 +197,7 @@ export const verifyLinkPasswordAction = async (
   shortCode: string,
   inputPassword: string,
 ) => {
-  console.log(inputPassword);
+  // console.log(inputPassword);
   try {
     const link = await getLinkDetails(shortCode);
 

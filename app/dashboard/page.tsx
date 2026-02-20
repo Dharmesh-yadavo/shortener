@@ -12,7 +12,7 @@ const DashboardPage = async () => {
 
   const topLink = await topLinkAction(user.id);
 
-  console.log(topLink);
+  // console.log(topLink);
 
   const dummyTopLinkData = {
     shortCode: "",

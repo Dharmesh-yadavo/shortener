@@ -22,7 +22,7 @@ export default function PasswordGate({
     e.preventDefault();
     setIsVerifying(true);
 
-    console.log(password);
+    // console.log(password);
 
     // Call a Server Action to verify the password
     const result = await verifyLinkPasswordAction(shortCode, password);

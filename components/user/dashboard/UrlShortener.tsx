@@ -37,7 +37,7 @@ export const UrlShortener = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const onSubmit = async (data: shortenerUserData) => {
-    console.log(data);
+    // console.log(data);
     const result = await shortLinkAction(data);
 
     if (result.status === "success" && "data" in result) {

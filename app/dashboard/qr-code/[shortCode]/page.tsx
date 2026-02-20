@@ -25,7 +25,7 @@ const DetailedQRage = async ({
 
   const analyticsData = await qrAnalyticsAction(shortCode);
 
-  console.log(analyticsData);
+  // console.log(analyticsData);
 
   return (
     <DetailedQrComp

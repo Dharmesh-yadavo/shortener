@@ -1,7 +1,6 @@
 // import { getCurrentUser } from "@/features/auth/server/auth.queries";
 
 import { GlassBackground } from "@/components/common/GlassBackground";
-import Noise from "@/components/Noise";
 import { Header } from "@/components/user/Header";
 import { Roboto, Amiri } from "next/font/google";
 
@@ -23,16 +22,11 @@ export default async function UserLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const user = await getCurrentUser();
-
-  // console.log(user);
-
   return (
     <>
       <body className={`${roboto.variable} ${amiri.variable} antialiased`}>
         <Header />
         <GlassBackground opacity={0.9} />
-        <Noise />
         {children}
       </body>
     </>
