@@ -163,13 +163,13 @@ export const CreateLinkComp = ({
                 <label className="text-sm font-bold text-slate-900">
                   Domain
                 </label>
-                <Select disabled defaultValue="localhost:3000">
+                <Select disabled defaultValue="shortenio.vercel.app">
                   <SelectTrigger className="h-12 bg-slate-50 border-slate-300 font-sans">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="localhost:3000">
-                      localhost:3000
+                    <SelectItem value="shortenio.vercel.app">
+                      shortenio.vercel.app
                     </SelectItem>
                   </SelectContent>
                 </Select>
