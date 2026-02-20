@@ -44,9 +44,8 @@ export async function POST(req: Request) {
       const planToSet = PLAN_MAP[priceId];
 
       // Use the path confirmed by your JSON log
-      const rawExpiry =
-        subscription.current_period_end ||
-        subscription.items.data[0].current_period_end;
+      const rawExpiry = subscription.items.data[0].current_period_end || "";
+
       const planExpiresAt = rawExpiry ? new Date(rawExpiry * 1000) : null;
 
       if (userId && planToSet) {
@@ -77,9 +76,7 @@ export async function POST(req: Request) {
           ? PLAN_MAP[subscription.items.data[0].price.id]
           : "free";
 
-      const rawExpiry =
-        subscription.current_period_end ||
-        subscription.items.data[0].current_period_end;
+      const rawExpiry = subscription.items.data[0].current_period_end || "";
       const planExpiresAt = rawExpiry ? new Date(rawExpiry * 1000) : null;
 
       await db

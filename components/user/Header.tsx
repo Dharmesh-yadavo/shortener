@@ -14,7 +14,6 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
-import { motion } from "framer-motion";
 
 export const Header = () => {
   const pathname = usePathname();
