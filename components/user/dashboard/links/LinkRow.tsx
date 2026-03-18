@@ -89,6 +89,7 @@ export const LinkRow = ({
       <td className="px-8 py-6">
         <div className="flex items-center gap-2">
           <Link
+            target="_blank"
             href={shortUrl}
             className="text-xs font-bold font-sans text-blue-600 bg-blue-50 px-2 py-1 rounded-md hover:underline"
           >

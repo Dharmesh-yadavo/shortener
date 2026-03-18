@@ -39,6 +39,7 @@ export const UrlDialogComp = ({
         <div className="bg-slate-50 border-2 border-dashed border-blue-100 rounded-xl p-6 my-4">
           <h3 className="text-blue-700 font-bold text-xl mb-4">
             <Link
+              target="_blank"
               href={generatedLink ? generatedLink : ""}
               className="font-bold truncate flex-1 hover:underline"
             >
