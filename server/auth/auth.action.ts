@@ -69,7 +69,7 @@ export const LoginFormAction = async (data: LoginUserData) => {
       return { status: "error", message: "Create ur Password" };
     }
 
-    const isValidPassword = argon2.verify(user.password, password);
+    const isValidPassword = await argon2.verify(user.password, password);
 
     if (!isValidPassword) {
       return { status: "error", message: "Invalid Email or Password" };

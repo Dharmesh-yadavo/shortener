@@ -3,7 +3,12 @@ import { db } from "@/config/db";
 import crypto from "crypto";
 import { getCurrentUser } from "../auth/auth.queries";
 import { redirect } from "next/navigation";
-import { qrCodeTable, shortLinkTable, users } from "@/drizzle/schema";
+import {
+  qrCodeTable,
+  sessionTable,
+  shortLinkTable,
+  users,
+} from "@/drizzle/schema";
 import {
   CreateLinkData,
   CreateQrData,
@@ -382,9 +387,11 @@ export const updatePasswordAction = async ({
       .set({ password: hashedPassword })
       .where(eq(users.id, userId));
 
+    await db.delete(sessionTable).where(eq(sessionTable.userId, userId));
+
     return {
       status: "success",
-      message: hasExistingPassword ? "Password updated!" : "Password created!",
+      message: "Password updated! Please login again.",
     };
   } catch (error) {
     console.error(error);
